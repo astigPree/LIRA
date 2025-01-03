@@ -34,12 +34,21 @@ def recordAudio(stream, duration=10, sample_rate=16000, channels=1, chunk_size=1
     print(f"Audio saved as {filename}")
 
 
+def openAlarm():
+    # Open the alarm using your preferred method (e.g., using GPIO pins) and the duration is 90 seconds
+    print("Alarm is being opened")
 
-
-
-
-
-
+def openLights():
+    # Open the lights using your preferred method (e.g., using GPIO pins)
+    print("Lights are being opened")
+    
+    
+def sendLocation():
+    # Get the location from the module (GY-NEO6MV3)
+    # Send the location using your preferred method (e.g., using SIM800L )
+    # Send also pre-defined message
+    print("Location is being sent") 
+    
 
 
 # Initialize the Vosk model and recognizer
@@ -61,8 +70,24 @@ if __name__ == '__main__':
                 print(text[14:-3])
                 command = text[14:-3]
                 
+                if 'help' in command:
+                    # Emergency Response: Activate the full emergency response with certain voice commands:
+                    sendLocation() # 1. Send location
+                    openAlarm() # 2. Open alarm
+                    recordAudio() # 3. Record audio
+                 
+                if 'light' in command:
+                    # Lights: Turn on/off the device's lights.
+                    openLights()
+                    
                 if 'record' in command:
-                    recordAudio(stream)
+                    # Recording: Start/stop audio recording.
+                    recordAudio(stream) 
+                                    
+                if 'message' in command:
+                    # SMS: Send a pre-defined text message.
+                    sendLocation() 
+            
                     
     except KeyboardInterrupt:
         print("Exiting program")
