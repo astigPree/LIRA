@@ -52,7 +52,20 @@ def sendLocation():
 
 
 def PANIC_EVENT():
-    pass
+    # Activate the full emergency response when button is pressed
+    print("PANIC EVENT")
+    
+    
+    
+
+
+
+
+def speak_in_commands(text : str , commands : list[str]):
+    for command in commands:
+        if command in text:
+            return True
+    return False
 
 
 # Initialize the Vosk model and recognizer
@@ -75,26 +88,28 @@ if __name__ == '__main__':
                 print(text[14:-3])
                 command = text[14:-3]
                 
-                if 'lira' in command or 'leona' in command or 'lila' in command:
+                if speak_in_commands(command , ['lira', 'leona', 'lila']):
                     # Name of the machine to activate all the command
-                    if 'help' in command:
+                    if speak_in_commands(command , ['help', 'emergency', 'panic']):
                         # Emergency Response: Activate the full emergency response with certain voice commands:
                         sendLocation() # 1. Send location
                         openAlarm() # 2. Open alarm
                         recordAudio(stream) # 3. Record audio
                     
-                    if 'light' in command:
+                    if speak_in_commands(command , ['lights', 'light' , 'lighting']):
                         # Lights: Turn on/off the device's lights.
-                        if 'blink' in command:
+                        if speak_in_commands(command, ['blink']):
                             openLights('blink')
-                        elif 'on' in command:
+                        elif speak_in_commands(command, ['on', 'steady', 'stay']):
                             openLights('on')
+                        elif speak_in_commands(command, ['off', 'turn off']):
+                            openLights('off')
                         
-                    if 'record' in command:
+                    if speak_in_commands(command , ['record', 'recording', 'recognized', 'recognize']):
                         # Recording: Start/stop audio recording.
                         recordAudio(stream) 
                                         
-                    if 'message' in command:
+                    if speak_in_commands(command , ['sms', 'message', 'chat', 'text', 'send', 'report']):
                         # SMS: Send a pre-defined text message.
                         sendLocation() 
 
