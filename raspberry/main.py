@@ -38,9 +38,9 @@ def openAlarm():
     # Open the alarm using your preferred method (e.g., using GPIO pins) and the duration is 90 seconds
     print("Alarm is being opened")
 
-def openLights():
+def openLights( mode: str):
     # Open the lights using your preferred method (e.g., using GPIO pins)
-    print("Lights are being opened")
+    print(f"Lights are being opened : {mode}")
     
     
 def sendLocation():
@@ -48,7 +48,11 @@ def sendLocation():
     # Send the location using your preferred method (e.g., using SIM800L )
     # Send also pre-defined message
     print("Location is being sent") 
-    
+
+
+
+def PANIC_EVENT():
+    pass
 
 
 # Initialize the Vosk model and recognizer
@@ -60,6 +64,7 @@ mic = pyaudio.PyAudio()
 stream = mic.open(format=pyaudio.paInt16, channels=1, rate=16000, input=True, frames_per_buffer=8192)
 stream.start_stream()
 
+
 if __name__ == '__main__':
     try:
         while True:
@@ -70,24 +75,29 @@ if __name__ == '__main__':
                 print(text[14:-3])
                 command = text[14:-3]
                 
-                if 'help' in command:
-                    # Emergency Response: Activate the full emergency response with certain voice commands:
-                    sendLocation() # 1. Send location
-                    openAlarm() # 2. Open alarm
-                    recordAudio() # 3. Record audio
-                 
-                if 'light' in command:
-                    # Lights: Turn on/off the device's lights.
-                    openLights()
+                if 'lira' in command or 'leona' in command or 'lila' in command:
+                    # Name of the machine to activate all the command
+                    if 'help' in command:
+                        # Emergency Response: Activate the full emergency response with certain voice commands:
+                        sendLocation() # 1. Send location
+                        openAlarm() # 2. Open alarm
+                        recordAudio(stream) # 3. Record audio
                     
-                if 'record' in command:
-                    # Recording: Start/stop audio recording.
-                    recordAudio(stream) 
-                                    
-                if 'message' in command:
-                    # SMS: Send a pre-defined text message.
-                    sendLocation() 
-            
+                    if 'light' in command:
+                        # Lights: Turn on/off the device's lights.
+                        if 'blink' in command:
+                            openLights('blink')
+                        elif 'on' in command:
+                            openLights('on')
+                        
+                    if 'record' in command:
+                        # Recording: Start/stop audio recording.
+                        recordAudio(stream) 
+                                        
+                    if 'message' in command:
+                        # SMS: Send a pre-defined text message.
+                        sendLocation() 
+
                     
     except KeyboardInterrupt:
         print("Exiting program")
