@@ -10,9 +10,10 @@ import serial
 
 
 alarm = gpiozero.OutputDevice(27)
-
-
-
+red_light =gpiozero.OutputDevice(22)
+green_light =gpiozero.OutputDevice(24)
+blue_light =gpiozero.OutputDevice(23)
+flash_light = gpiozero.OutputDevice(26)
 
 
 def parse_gpgga(data : str):
@@ -144,16 +145,50 @@ def openAlarm(mode: str , timeout=90):
         print("SOS signal sent and alarm turned off")
     
     
-
-def openLights( mode: str):
+def openSOSLights(mode: str):
     # Open the lights using your preferred method (e.g., using GPIO pins)
-    print(f"Lights are being opened : {mode}")
-    if mode == "blink":
-        pass
+    print(f"Lights are being opened: {mode}")
+
+    if mode == "SOS":
+        # SOS signal: 3 short, 3 long, 3 short with different colors
+        colors = [(red_light, "Red"), (green_light, "Green"), (blue_light, "Blue")]
+
+        for i in range(3):  # 3 short flashes
+            for light, color_name in colors:
+                light.on()
+                print(f"Short flash: {color_name}")
+                time.sleep(0.5)
+                light.off()
+                time.sleep(0.5)
+
+        for i in range(3):  # 3 long flashes
+            for light, color_name in colors:
+                light.on()
+                print(f"Long flash: {color_name}")
+                time.sleep(1)
+                light.off()
+                time.sleep(0.5)
+
+        for i in range(3):  # 3 short flashes
+            for light, color_name in colors:
+                light.on()
+                print(f"Short flash: {color_name}")
+                time.sleep(0.5)
+                light.off()
+                time.sleep(0.5)
+
+        print("SOS signal with disco effect sent")
+
     elif mode == "on":
-        pass
+        flash_light.on()
+        print("Lights turned on")
+
     elif mode == "off":
-        pass
+        red_light.off()
+        green_light.off()
+        blue_light.off()
+        flash_light.off()
+        print("Lights turned off")
     
     
 def sendLocation(gps : serial.Serial, sms : serial.Serial):
@@ -161,7 +196,7 @@ def sendLocation(gps : serial.Serial, sms : serial.Serial):
     location = read_gps(gps)
     # Send the location using your preferred method (e.g., using SIM800L )
     phone_numbers = get_sms_phone_numbers(sms)
-    sms_text = "Emergency! Please help me! My location is {latitude}, {longitude}"
+    sms_text = "Emergency: I am in immediate danger and require urgent assistance. My last known location is as follows {latitude}, {longitude}"
     sms_text_without_gps = "Emergency! Please help me! My location is unknown please check my location to another device."  
     for phone_number in phone_numbers:
         if location:
@@ -172,11 +207,6 @@ def sendLocation(gps : serial.Serial, sms : serial.Serial):
     print("Location is being sent")
 
 
-
-def PANIC_EVENT():
-    # Activate the full emergency response when button is pressed
-    print("PANIC EVENT")
-    
 
 def speak_in_commands(text : str , commands : list[str]):
     for command in commands:
@@ -270,17 +300,17 @@ if __name__ == '__main__':
                     if speak_in_commands(command , ['help', 'emergency', 'panic']):
                         # Emergency Response: Activate the full emergency response with certain voice commands:
                         sendLocation( gps=gps , sms=sms ) # 1. Send location
-                        openAlarm("SOS") # 2. Open alarm
+                        openAlarm("on") # 2. Open alarm
                         recordAudio(stream) # 3. Record audio
                     
                     if speak_in_commands(command , ['lights', 'light' , 'lighting']):
                         # Lights: Turn on/off the device's lights.
                         if speak_in_commands(command, ['blink']):
-                            openLights('blink')
+                            openSOSLights('SOS')
                         elif speak_in_commands(command, ['on', 'steady', 'stay']):
-                            openLights('on')
+                            openSOSLights('on')
                         elif speak_in_commands(command, ['off', 'turn off']):
-                            openLights('off')
+                            openSOSLights('off')
                         
                     if speak_in_commands(command , ['record', 'recording', 'recognized', 'recognize']):
                         # Recording: Start/stop audio recording.
