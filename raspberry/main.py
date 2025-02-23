@@ -9,7 +9,13 @@ import time
 import serial
 
 
-def parse_gpgga(data):
+alarm = gpiozero.OutputDevice(27)
+
+
+
+
+
+def parse_gpgga(data : str):
     fields = data.split(',')
     if len(fields) < 6:
         return None
@@ -24,8 +30,15 @@ def parse_gpgga(data):
         'longitude': longitude + ' ' + longitude_dir
     }
 
-def read_gps(gps):
+def read_gps(gps: serial.Serial, timeout=300):
+    start_time = time.time()
     while True:
+        current_time = time.time()
+        elapsed_time = current_time - start_time
+        
+        if elapsed_time > timeout:
+            print("Timeout: GPS data not fetched within 5 minutes.")
+            return None 
         line = gps.readline().decode('ascii', errors='replace')
         if line.startswith('$GPGGA'):
             gps_data = parse_gpgga(line)
@@ -33,6 +46,44 @@ def read_gps(gps):
                 return gps_data
             else:
                 print("Failed to parse GPS data")
+
+def get_sms_phone_numbers( sms : serial.Serial):
+    sms.write(b'AT\r')
+    time.sleep(1)
+    sms.write(b'AT+CMGF=1\r')  # Set SMS mode to text
+    time.sleep(1)
+    sms.write(b'AT+CMGL="ALL"\r')  # List all SMS messages
+    time.sleep(1)
+    
+    response = sms.read_all().decode('ascii', errors='replace')
+    
+    phone_numbers = []
+    for line in response.split('\r\n'):
+        if line.startswith('+CMGL'):
+            parts = line.split(',')
+            if len(parts) >= 3:
+                phone_number = parts[2].strip('"')
+                phone_numbers.append(phone_number)
+    
+    return phone_numbers
+
+def send_sms( sms : serial.Serial , phone_number : str, message : str):
+    sms.write(b'AT\r')
+    time.sleep(1)
+    sms.write(b'AT+CMGF=1\r')  # Set SMS mode to text
+    time.sleep(1)
+    sms.write(f'AT+CMGS="{phone_number}"\r'.encode())
+    time.sleep(1)
+    sms.write(f'{message}\x1A'.encode())  # \x1A is the ASCII code for Ctrl+Z
+    time.sleep(3)
+    
+    response = sms.read_all().decode('ascii', errors='replace')
+    if 'OK' in response:
+        print("Message sent successfully!")
+        return True
+    else:
+        print("Failed to send message.")
+        return False
 
 def recordAudio(stream, duration=10, sample_rate=16000, channels=1, chunk_size=1024):
     print("Recording...")
@@ -62,9 +113,37 @@ def recordAudio(stream, duration=10, sample_rate=16000, channels=1, chunk_size=1
     print(f"Audio saved as {filename}")
 
 
-def openAlarm():
-    # Open the alarm using your preferred method (e.g., using GPIO pins) and the duration is 90 seconds
+def openAlarm(mode: str , timeout=90):
+    # Open the alarm using GPIO pins and keep it active for 90 seconds
     print("Alarm is being opened")
+    
+    if mode == "on":
+        alarm.on()
+        time.sleep(timeout)  # Alarm active for 90 seconds
+        alarm.off()
+        print("Alarm turned off after 90 seconds")
+    
+    elif mode == "off":
+        alarm.off()
+        print("Alarm turned off immediately")
+    
+    elif mode == "SOS":
+        # SOS signal: on and off sequence
+        for _ in range(9):  # 9 cycles for SOS (3 short, 3 long, 3 short)
+            alarm.on()
+            time.sleep(0.5)  # Short beep (0.5 seconds)
+            alarm.off()
+            time.sleep(0.5)
+        time.sleep(1)  # Pause between cycles
+        for _ in range(9):
+            alarm.on()
+            time.sleep(1)  # Long beep (1 second)
+            alarm.off()
+            time.sleep(0.5)
+        alarm.off()
+        print("SOS signal sent and alarm turned off")
+    
+    
 
 def openLights( mode: str):
     # Open the lights using your preferred method (e.g., using GPIO pins)
@@ -77,12 +156,20 @@ def openLights( mode: str):
         pass
     
     
-def sendLocation():
+def sendLocation(gps : serial.Serial, sms : serial.Serial):
     # Get the location from the module (GY-NEO6MV3)
     location = read_gps(gps)
     # Send the location using your preferred method (e.g., using SIM800L )
+    phone_numbers = get_sms_phone_numbers(sms)
+    sms_text = "Emergency! Please help me! My location is {latitude}, {longitude}"
+    sms_text_without_gps = "Emergency! Please help me! My location is unknown please check my location to another device."  
+    for phone_number in phone_numbers:
+        if location:
+            send_sms(sms, phone_number, sms_text.format(latitude=location['latitude'], longitude=location['longitude']))
+        else:
+            send_sms(sms, phone_number, sms_text_without_gps)
     # Send also pre-defined message
-    print("Location is being sent") 
+    print("Location is being sent")
 
 
 
@@ -90,8 +177,6 @@ def PANIC_EVENT():
     # Activate the full emergency response when button is pressed
     print("PANIC EVENT")
     
-
-
 
 def speak_in_commands(text : str , commands : list[str]):
     for command in commands:
@@ -166,6 +251,7 @@ if __name__ == '__main__':
         
         # Set up the serial connection (adjust the port and baud rate as needed)
         gps = serial.Serial('/dev/ttyS0', 9600, timeout=1)
+        sms = serial.Serial('/dev/ttyS0', 9600, timeout=1)
         
         while True:
             
@@ -183,8 +269,8 @@ if __name__ == '__main__':
                     # Name of the machine to activate all the command
                     if speak_in_commands(command , ['help', 'emergency', 'panic']):
                         # Emergency Response: Activate the full emergency response with certain voice commands:
-                        sendLocation() # 1. Send location
-                        openAlarm() # 2. Open alarm
+                        sendLocation( gps=gps , sms=sms ) # 1. Send location
+                        openAlarm("SOS") # 2. Open alarm
                         recordAudio(stream) # 3. Record audio
                     
                     if speak_in_commands(command , ['lights', 'light' , 'lighting']):
@@ -202,7 +288,7 @@ if __name__ == '__main__':
                                         
                     if speak_in_commands(command , ['sms', 'message', 'chat', 'text', 'send', 'report']):
                         # SMS: Send a pre-defined text message.
-                        sendLocation() 
+                        sendLocation( gps=gps , sms=sms ) # 1. Send location
 
     
     except gpiozero.exc.BadPinFactory as e:
