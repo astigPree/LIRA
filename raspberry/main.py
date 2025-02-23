@@ -8,12 +8,14 @@ import signal
 import time
 import serial
 
+device_turn_on = True
 
 alarm = gpiozero.OutputDevice(27)
 red_light =gpiozero.OutputDevice(22)
 green_light =gpiozero.OutputDevice(24)
 blue_light =gpiozero.OutputDevice(23)
 flash_light = gpiozero.OutputDevice(26)
+button = gpiozero.Button(22)
 
 
 def parse_gpgga(data : str):
@@ -143,7 +145,26 @@ def openAlarm(mode: str , timeout=90):
             time.sleep(0.5)
         alarm.off()
         print("SOS signal sent and alarm turned off")
-    
+        
+    elif mode == "device_on":
+        alarm.on()
+        print("Device alarm activated with continuous sound sequence")
+        # Continuous sound sequence for device mode
+        for _ in range(10):
+            alarm.on()
+            time.sleep(0.2)
+            alarm.off()
+            time.sleep(0.2)
+            
+    elif mode == "device_off":
+        alarm.on()
+        print("Device alarm activated with continuous sound sequence")
+        # Continuous sound sequence for device mode
+        for _ in range(10):
+            alarm.on()
+            time.sleep(0.5)
+            alarm.off()
+            time.sleep(0.2)
     
 def openSOSLights(mode: str):
     # Open the lights using your preferred method (e.g., using GPIO pins)
@@ -215,9 +236,16 @@ def speak_in_commands(text : str , commands : list[str]):
     return False
 
 
-
 def single_click():
+    global device_turn_on
     print("Single click detected")
+    device_turn_on = not device_turn_on
+    if device_turn_on:
+        print("Device turned on")
+        openAlarm("device_on")
+    else:
+        print("Device turned off")
+        openAlarm("device_off")
 
 def double_click():
     print("Double click detected")
@@ -231,6 +259,13 @@ is_button_pressed = False
 click_count = 0
 last_click_time = 0
 click_timeout = 0.4  # Time window for double/triple clicks in seconds
+
+def reset_clicks():
+    global click_count, last_click_time , is_button_pressed
+    click_count = 0
+    last_click_time = 0
+    is_button_pressed = False
+
 
 def handle_click():
     global click_count, last_click_time, is_button_pressed
@@ -250,18 +285,16 @@ def handle_click():
     if click_count == 1:
         is_button_pressed = True
         single_click()
+        reset_clicks()
     elif click_count == 2:
         is_button_pressed = False
         double_click()
+        reset_clicks()
     elif click_count == 3:
         is_button_pressed = False
         triple_click()
-
-def reset_clicks():
-    global click_count, last_click_time
-    click_count = 0
-    last_click_time = 0
-
+        reset_clicks()
+    
 
 
 model = Model(r"vosk-model-small-en-us-0.15")
@@ -276,7 +309,6 @@ stream.start_stream()
 if __name__ == '__main__':
     try:
         
-        button = gpiozero.Button(22)
         button.when_pressed = handle_click
         
         # Set up the serial connection (adjust the port and baud rate as needed)
@@ -285,8 +317,12 @@ if __name__ == '__main__':
         
         while True:
             
+            if not device_turn_on:
+                continue
+            
             if is_button_pressed:
                 continue
+            
             
             data = stream.read(4096)
             
