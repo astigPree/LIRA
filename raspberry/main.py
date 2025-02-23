@@ -3,8 +3,36 @@ import wave
 import datetime
 from vosk import Model, KaldiRecognizer
 import os
+import gpiozero
+import signal
+import time
+import serial
 
 
+def parse_gpgga(data):
+    fields = data.split(',')
+    if len(fields) < 6:
+        return None
+
+    latitude = fields[2]
+    latitude_dir = fields[3]
+    longitude = fields[4]
+    longitude_dir = fields[5]
+
+    return {
+        'latitude': latitude + ' ' + latitude_dir,
+        'longitude': longitude + ' ' + longitude_dir
+    }
+
+def read_gps(gps):
+    while True:
+        line = gps.readline().decode('ascii', errors='replace')
+        if line.startswith('$GPGGA'):
+            gps_data = parse_gpgga(line)
+            if gps_data:
+                return gps_data
+            else:
+                print("Failed to parse GPS data")
 
 def recordAudio(stream, duration=10, sample_rate=16000, channels=1, chunk_size=1024):
     print("Recording...")
@@ -41,10 +69,17 @@ def openAlarm():
 def openLights( mode: str):
     # Open the lights using your preferred method (e.g., using GPIO pins)
     print(f"Lights are being opened : {mode}")
+    if mode == "blink":
+        pass
+    elif mode == "on":
+        pass
+    elif mode == "off":
+        pass
     
     
 def sendLocation():
     # Get the location from the module (GY-NEO6MV3)
+    location = read_gps(gps)
     # Send the location using your preferred method (e.g., using SIM800L )
     # Send also pre-defined message
     print("Location is being sent") 
@@ -55,9 +90,6 @@ def PANIC_EVENT():
     # Activate the full emergency response when button is pressed
     print("PANIC EVENT")
     
-    
-    
-
 
 
 
@@ -68,7 +100,55 @@ def speak_in_commands(text : str , commands : list[str]):
     return False
 
 
+
+def single_click():
+    print("Single click detected")
+
+def double_click():
+    print("Double click detected")
+
+def triple_click():
+    print("Triple click detected")
+
+
 # Initialize the Vosk model and recognizer
+is_button_pressed = False
+click_count = 0
+last_click_time = 0
+click_timeout = 0.4  # Time window for double/triple clicks in seconds
+
+def handle_click():
+    global click_count, last_click_time, is_button_pressed
+    
+    current_time = time.time()
+    
+    if current_time - last_click_time > click_timeout:
+        click_count = 1
+    else:
+        click_count += 1
+    
+    last_click_time = current_time
+    
+    # Wait a short period to determine if more clicks are coming
+    time.sleep(click_timeout)
+    
+    if click_count == 1:
+        is_button_pressed = True
+        single_click()
+    elif click_count == 2:
+        is_button_pressed = False
+        double_click()
+    elif click_count == 3:
+        is_button_pressed = False
+        triple_click()
+
+def reset_clicks():
+    global click_count, last_click_time
+    click_count = 0
+    last_click_time = 0
+
+
+
 model = Model(r"vosk-model-small-en-us-0.15")
 recognizer = KaldiRecognizer(model, 16000)
 
@@ -80,7 +160,18 @@ stream.start_stream()
 
 if __name__ == '__main__':
     try:
+        
+        button = gpiozero.Button(22)
+        button.when_pressed = handle_click
+        
+        # Set up the serial connection (adjust the port and baud rate as needed)
+        gps = serial.Serial('/dev/ttyS0', 9600, timeout=1)
+        
         while True:
+            
+            if is_button_pressed:
+                continue
+            
             data = stream.read(4096)
             
             if recognizer.AcceptWaveform(data):
@@ -113,10 +204,14 @@ if __name__ == '__main__':
                         # SMS: Send a pre-defined text message.
                         sendLocation() 
 
-                    
+    
+    except gpiozero.exc.BadPinFactory as e:
+        print(f"GPIO error: {e}")    
     except KeyboardInterrupt:
         print("Exiting program")
     finally:
-        stream.stop_stream()
-        stream.close()
-        mic.terminate()
+        if stream :
+            stream.stop_stream()
+            stream.close()
+        if mic:
+            mic.terminate()
