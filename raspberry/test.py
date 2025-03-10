@@ -1,26 +1,24 @@
-
-
 from pocketsphinx import LiveSpeech
 
-# Initialize LiveSpeech for continuous speech recognition
+# Initialize LiveSpeech for offline recognition
 speech = LiveSpeech(
-    rate=16000,  # Sampling rate
-    buffer_size=4096,  # Buffer size
-    no_search=False,  # Enable recognition
-    full_utt=False  # Process partial utterances
+    rate=16000,             # Ensure the sampling rate matches the microphone's configuration
+    buffer_size=2048,       # Reduce buffer size for resource-constrained devices
+    no_search=False,        # Enable recognition
+    full_utt=False          # Process partial utterances
 )
 
 if __name__ == '__main__':
     try:
         print("Start speaking...")
-        
-        # Loop to process continuous speech
+
+        # Continuous speech recognition loop
         for phrase in speech:
-            # Recognized text
+            # Convert recognized speech to text
             text = str(phrase)
             print(f"You said: {text}")
-            
-            # Example: Extract command from recognized text
+
+            # Process recognized command if needed
             command = text.strip()
             print(f"Command: {command}")
     except KeyboardInterrupt:
