@@ -34,6 +34,9 @@ def parse_gpgga(data : str):
     }
 
 def read_gps(gps: serial.Serial, timeout=300):
+    if not gps:
+        print("Failed to open GPS serial port.")
+        return None
     start_time = time.time()
     while True:
         current_time = time.time()
@@ -51,6 +54,9 @@ def read_gps(gps: serial.Serial, timeout=300):
                 print("Failed to parse GPS data")
 
 def get_sms_phone_numbers( sms : serial.Serial):
+    if sms is None:
+        print("Failed to open SMS serial port.")
+        return []
     sms.write(b'AT\r')
     time.sleep(1)
     sms.write(b'AT+CMGF=1\r')  # Set SMS mode to text
@@ -71,6 +77,9 @@ def get_sms_phone_numbers( sms : serial.Serial):
     return phone_numbers
 
 def send_sms( sms : serial.Serial , phone_number : str, message : str):
+    if sms is None:
+        print("Failed to open SMS serial port.")
+        return False
     sms.write(b'AT\r')
     time.sleep(1)
     sms.write(b'AT+CMGF=1\r')  # Set SMS mode to text
@@ -214,6 +223,9 @@ def openSOSLights(mode: str):
     
 def sendLocation(gps : serial.Serial, sms : serial.Serial):
     # Get the location from the module (GY-NEO6MV3)
+    if not sms or not gps:
+        print("Failed to send location. Either SMS or GPS is not available.")
+        return
     location = read_gps(gps)
     # Send the location using your preferred method (e.g., using SIM800L )
     phone_numbers = get_sms_phone_numbers(sms)
@@ -312,8 +324,10 @@ if __name__ == '__main__':
         button.when_pressed = handle_click
         
         # Set up the serial connection (adjust the port and baud rate as needed)
-        gps = serial.Serial('/dev/ttyS0', 9600, timeout=1)
-        sms = serial.Serial('/dev/ttyS0', 9600, timeout=1)
+        # gps = serial.Serial('/dev/ttyS0', 9600, timeout=1)
+        # sms = serial.Serial('/dev/ttyS0', 9600, timeout=1)
+        gps = None
+        sms = None
         
         while True:
             
