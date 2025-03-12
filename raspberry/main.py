@@ -322,7 +322,8 @@ stream.start_stream()
 if __name__ == '__main__':
     try:
         
-        button.when_pressed = handle_click
+        print("Starting...")
+        # button.when_pressed = handle_click
         
         # Set up the serial connection (adjust the port and baud rate as needed)
         # gps = serial.Serial('/dev/ttyS0', 9600, timeout=1)
@@ -343,7 +344,7 @@ if __name__ == '__main__':
             
             if recognizer.AcceptWaveform(data):
                 text = recognizer.Result()
-                print(text[14:-3])
+                print( "Recognized: " + text[14:-3])
                 command = text[14:-3]
                 
                 if speak_in_commands(command , ['lira', 'leona', 'lila']):
