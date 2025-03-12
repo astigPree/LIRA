@@ -102,28 +102,42 @@ def recordAudio(stream, duration=10, sample_rate=16000, channels=1, chunk_size=1
     print("Recording...")
     frames = []
 
-    for _ in range(int(sample_rate / chunk_size * duration)):
-        data = stream.read(chunk_size)
-        frames.append(data)
+    try:
+        # Record audio in chunks for the specified duration
+        for _ in range(int(sample_rate / chunk_size * duration)):
+            data = stream.read(chunk_size, exception_on_overflow=False)  # Avoid potential overflow errors
+            frames.append(data)
 
-    print("Recording finished")
+        print("Recording finished")
 
-    # Save the recorded audio to a file
-    def generate_filename():
-        current_time = datetime.datetime.now()
-        date_str = current_time.strftime("%Y%m%d_%H%M%S")
-        filename = f"recorded_audio_{date_str}.wav"
-        return filename
+        # Function to generate a timestamped filename
+        def generate_filename():
+            current_time = datetime.datetime.now()
+            date_str = current_time.strftime("%Y%m%d_%H%M%S")
+            filename = f"recorded_audio_{date_str}.wav"
+            return filename
+
+        # Ensure the "recorded" directory exists
+        output_dir = os.path.join(os.getcwd(), "recorded")
+        if not os.path.exists(output_dir):
+            os.makedirs(output_dir)
+
+        # Create the full file path
+        filename = os.path.join(output_dir, generate_filename())
+
+        # Save the recorded audio to a WAV file
+        wf = wave.open(filename, 'wb')
+        wf.setnchannels(channels)
+        wf.setsampwidth(pyaudio.PyAudio().get_sample_size(pyaudio.paInt16))
+        wf.setframerate(sample_rate)
+        wf.writeframes(b''.join(frames))
+        wf.close()
+
+        print(f"Audio saved as {filename}")
     
-    filename = os.path.join( os.getcwd(), "recorded" , generate_filename())
-    wf = wave.open(filename, 'wb')
-    wf.setnchannels(channels)
-    wf.setsampwidth(pyaudio.get_sample_size(pyaudio.paInt16))
-    wf.setframerate(sample_rate)
-    wf.writeframes(b''.join(frames))
-    wf.close()
+    except Exception as e:
+        print(f"An error occurred while recording or saving audio: {e}")
 
-    print(f"Audio saved as {filename}")
 
 
 def openAlarm(mode: str , timeout=90):
