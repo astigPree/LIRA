@@ -7,25 +7,43 @@
 # print( "SIM7600 :" , response.decode('utf-8'))  # Print the module's response
 
 
-
 from gpiozero import OutputDevice
 from time import sleep
 
-# Set up GPIO22 as an output
+# Set up the GPIO pins
+alarm = OutputDevice(27)
 red_light = OutputDevice(22)
+green_light = OutputDevice(24)
+blue_light = OutputDevice(23)
+flash_light = OutputDevice(26)
 
-print("Toggling the red light...")
+# List of all devices for testing
+devices = {
+    "Alarm": alarm,
+    "Red Light": red_light,
+    "Green Light": green_light,
+    "Blue Light": blue_light,
+    "Flash Light": flash_light,
+}
+
+# Test each pin
+print("Testing output pins...")
 try:
-    while True:
-        red_light.on()  # Turn the light ON
-        print("Red light is ON")
-        sleep(4)        # Wait for 1 second
+    for name, device in devices.items():
+        print(f"Turning ON {name}")
+        device.on()  # Turn the pin ON
+        sleep(2)     # Wait for 2 seconds to observe
+        print(f"Turning OFF {name}")
+        device.off() # Turn the pin OFF
+        sleep(1)     # Wait for 1 second before testing the next pin
 
-        red_light.off() # Turn the light OFF
-        print("Red light is OFF")
-        sleep(4)        # Wait for 1 second
+    print("Testing complete. All pins toggled.")
 except KeyboardInterrupt:
     print("\nExiting... Cleaning up GPIO.")
+finally:
+    # Clean up all GPIO pins
+    for device in devices.values():
+        device.off()  # Ensure all pins are turned off
 
 
 
