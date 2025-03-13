@@ -1,30 +1,10 @@
-from pocketsphinx import LiveSpeech
+import serial
 
-# Initialize LiveSpeech for offline recognition
-speech = LiveSpeech(
-    rate=16000,             # Ensure the sampling rate matches the microphone's configuration
-    buffer_size=2048,       # Reduce buffer size for resource-constrained devices
-    no_search=False,        # Enable recognition
-    full_utt=False          # Process partial utterances
-)
-
-if __name__ == '__main__':
-    try:
-        print("Start speaking...")
-
-        # Continuous speech recognition loop
-        for phrase in speech:
-            # Convert recognized speech to text
-            text = str(phrase)
-            print(f"You said: {text}")
-
-            # Process recognized command if needed
-            command = text.strip()
-            print(f"Command: {command}")
-    except KeyboardInterrupt:
-        print("\nExiting...")
-
-
+# Configure the serial connection
+ser = serial.Serial('/dev/serial0', 9600, timeout=1)
+ser.write(b'AT\r\n')  # Send AT command
+response = ser.read(100)  # Read response
+print(response.decode('utf-8'))  # Print the response
 
 
 
