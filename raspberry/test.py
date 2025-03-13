@@ -5,20 +5,28 @@
 # ser.write(b'AT\r\n')  # Send AT command
 # response = ser.read(100)  # Read response
 # print( "SIM7600 :" , response.decode('utf-8'))  # Print the module's response
-from signal import pause
-from gpiozero import Button
-from gpiozero.pins.rpigpio import RPiGPIOFactory  # Use RPi.GPIO pin factory
 
-factory = RPiGPIOFactory()
-button = Button(2, pin_factory=factory)
-def say_hello():
-    print("Hello!")
 
-button = Button(22)
 
-button.when_pressed = say_hello
+from gpiozero import OutputDevice
+from time import sleep
 
-pause()
+# Set up GPIO22 as an output
+red_light = OutputDevice(22)
+
+print("Toggling the red light...")
+try:
+    while True:
+        red_light.on()  # Turn the light ON
+        print("Red light is ON")
+        sleep(1)        # Wait for 1 second
+
+        red_light.off() # Turn the light OFF
+        print("Red light is OFF")
+        sleep(1)        # Wait for 1 second
+except KeyboardInterrupt:
+    print("\nExiting... Cleaning up GPIO.")
+
 
 
 
