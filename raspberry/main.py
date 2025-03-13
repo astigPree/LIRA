@@ -7,6 +7,13 @@ import gpiozero
 import signal
 import time
 import serial
+import RPi.GPIO as GPIO
+import time
+from threading import Thread
+
+button = 2
+GPIO.setmode(GPIO.BCM)  # Use Broadcom (BCM) pin numbering
+GPIO.setup(button, GPIO.IN, pull_up_down=GPIO.PUD_UP)  # Setup GPIO2 as input with pull-up
 
 device_turn_on = True
 
@@ -322,7 +329,15 @@ def handle_click():
         triple_click()
         reset_clicks()
     
-
+def thread_button_event():
+    try:
+        while True:
+            if GPIO.input(2) == GPIO.LOW:  # Check if the button is pressed
+                print("Button was pressed!")
+                handle_click()
+                time.sleep(0.2)  # Debounce
+    except KeyboardInterrupt:
+        GPIO.cleanup()  # Cleanup resources on exit
 
 model = Model(r"vosk-model-small-en-us-0.15")
 recognizer = KaldiRecognizer(model, 16000)
@@ -332,8 +347,8 @@ mic = pyaudio.PyAudio()
 stream = mic.open(format=pyaudio.paInt16, channels=1, rate=16000, input=True, frames_per_buffer=8192)
 stream.start_stream()
 
-
 if __name__ == '__main__':
+    Thread(target=thread_button_event, daemon=False).start()
     try:
         
         print("Starting...")
@@ -344,6 +359,8 @@ if __name__ == '__main__':
         # sms = serial.Serial('/dev/ttyS0', 9600, timeout=1)
         gps = None
         sms = None
+        
+        
         
         while True:
             
