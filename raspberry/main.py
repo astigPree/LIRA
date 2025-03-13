@@ -329,15 +329,24 @@ def handle_click():
         triple_click()
         reset_clicks()
     
+# Global flag to stop the thread
+stop_thread = False
+
 def thread_button_event():
     try:
-        while True:
+        while not stop_thread:  # Run only if stop_thread is False
             if GPIO.input(2) == GPIO.LOW:  # Check if the button is pressed
                 print("Button was pressed!")
                 handle_click()
                 time.sleep(0.2)  # Debounce
-    except KeyboardInterrupt:
-        GPIO.cleanup()  # Cleanup resources on exit
+    except Exception as e:
+        print(f"Error: {e}")
+    finally:
+        GPIO.cleanup()  # Cleanup GPIO resources when the thread stops
+
+# Start the thread (non-daemon for proper cleanup)
+button_thread = Thread(target=thread_button_event, daemon=False)
+button_thread.start()
 
 model = Model(r"vosk-model-small-en-us-0.15")
 recognizer = KaldiRecognizer(model, 16000)
@@ -348,7 +357,6 @@ stream = mic.open(format=pyaudio.paInt16, channels=1, rate=16000, input=True, fr
 stream.start_stream()
 
 if __name__ == '__main__':
-    Thread(target=thread_button_event, daemon=False).start()
     try:
         
         print("Starting...")
@@ -407,10 +415,13 @@ if __name__ == '__main__':
     except gpiozero.exc.BadPinFactory as e:
         print(f"GPIO error: {e}")    
     except KeyboardInterrupt:
-        print("Exiting program")
+        print("Exiting program") 
     finally:
         if stream :
             stream.stop_stream()
             stream.close()
         if mic:
-            mic.terminate()
+            mic.terminate() 
+        stop_thread = True  # Signal the thread to stop
+        button_thread.join()  # Wait for the thread to finish
+        GPIO.cleanup()  # Final GPIO cleanup
