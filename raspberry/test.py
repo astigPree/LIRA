@@ -24,8 +24,9 @@ try:
     while True:
         line = gps.readline().decode('ascii', errors='ignore').strip()
         if line.startswith('$GPGGA') or line.startswith('$GPRMC'):  # Look for relevant sentences
-            parsed_data = parse_gprmc(line) if line.startswith('$GPRMC') else parse_gpgga(line)
-            if parsed_data:
+            #  if line.startswith('$GPRMC') else parse_gpgga(line)
+            if line.startswith('$GPRMC'):
+                parsed_data = parse_gprmc(line)
                 print(f"Latitude: {parsed_data['latitude']}, Longitude: {parsed_data['longitude']}")
 except KeyboardInterrupt:
     print("\nExiting...")
