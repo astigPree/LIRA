@@ -1,7 +1,7 @@
 import serial
 
 # Configure the serial connection
-ser = serial.Serial('/dev/serial0', 9600, timeout=1)  # Match the SIM7600 baud rate
+ser = serial.Serial('/dev/serial0', 115200, timeout=1)  # Match the SIM7600 baud rate
 ser.write(b'AT\r\n')  # Send AT command
 response = ser.read(100)  # Read response
 print( "SIM7600 :" , response.decode('utf-8'))  # Print the module's response
