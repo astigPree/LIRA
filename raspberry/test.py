@@ -7,12 +7,16 @@
 # print( "SIM7600 :" , response.decode('utf-8'))  # Print the module's response
 
 from gpiozero import Button
+from gpiozero.pins.rpigpio import RPiGPIOFactory  # Use RPiGPIO pin factory
 
-button = Button(2)
+# Explicitly set the pin factory
+factory = RPiGPIOFactory()
+
+# Define the button on GPIO2 (BCM mode)
+button = Button(2, pin_factory=factory)
 
 button.wait_for_press()
-print("Button was pressed")
-
+print("Button was pressed!")
 
 
 
