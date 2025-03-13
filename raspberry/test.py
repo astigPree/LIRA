@@ -1,22 +1,20 @@
 import serial
 
-# Define the parse function
-def parse_gpgga(data: str):
+def parse_gprmc(data):
     fields = data.split(',')
-    if len(fields) < 6:
+    if len(fields) < 10:
         return None
 
-    latitude = fields[2]
-    latitude_dir = fields[3]
-    longitude = fields[4]
-    longitude_dir = fields[5]
+    latitude = fields[3]
+    latitude_dir = fields[4]
+    longitude = fields[5]
+    longitude_dir = fields[6]
 
     return {
         'latitude': latitude + ' ' + latitude_dir,
         'longitude': longitude + ' ' + longitude_dir
     }
 
-# Configure the serial connection
 gps_port = '/dev/ttyUSB0'  # Replace with your device port
 baud_rate = 9600
 gps = serial.Serial(gps_port, baud_rate, timeout=1)
@@ -24,15 +22,15 @@ gps = serial.Serial(gps_port, baud_rate, timeout=1)
 print("Reading GPS data...")
 try:
     while True:
-        line = gps.readline().decode('ascii', errors='ignore')  # Read a line of NMEA data
-        if line.startswith('$GPGGA'):  # Check for GPGGA sentences
-            parsed_data = parse_gpgga(line)  # Use your function to parse the sentence
+        line = gps.readline().decode('ascii', errors='ignore').strip()
+        if line.startswith('$GPGGA') or line.startswith('$GPRMC'):  # Look for relevant sentences
+            parsed_data = parse_gprmc(line) if line.startswith('$GPRMC') else parse_gpgga(line)
             if parsed_data:
                 print(f"Latitude: {parsed_data['latitude']}, Longitude: {parsed_data['longitude']}")
 except KeyboardInterrupt:
     print("\nExiting...")
 finally:
-    gps.close()  # Close the serial connection
+    gps.close()
 
 
 
