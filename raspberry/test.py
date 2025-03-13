@@ -11,7 +11,7 @@ from signal import pause
 def say_hello():
     print("Hello!")
 
-button = Button(2)
+button = Button(22)
 
 button.when_pressed = say_hello
 
