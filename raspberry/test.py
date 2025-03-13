@@ -6,17 +6,19 @@
 # response = ser.read(100)  # Read response
 # print( "SIM7600 :" , response.decode('utf-8'))  # Print the module's response
 
-from gpiozero import Button
-from gpiozero.pins.rpigpio import RPiGPIOFactory  # Use RPiGPIO pin factory
+import RPi.GPIO as GPIO
 
-# Explicitly set the pin factory
-factory = RPiGPIOFactory()
+GPIO.setmode(GPIO.BCM)
+GPIO.setup(2, GPIO.IN, pull_up_down=GPIO.PUD_UP)
 
-# Define the button on GPIO2 (BCM mode)
-button = Button(2, pin_factory=factory)
+print("Reading GPIO2...")
+try:
+    while True:
+        state = GPIO.input(2)
+        print(f"GPIO2 state: {'HIGH' if state else 'LOW'}")
+except KeyboardInterrupt:
+    GPIO.cleanup()
 
-button.wait_for_press()
-print("Button was pressed!")
 
 
 
