@@ -1,12 +1,17 @@
-import serial
+# import serial
 
-# Configure the serial connection
-ser = serial.Serial('/dev/serial0', 9600, timeout=1)  # Match the SIM7600 baud rate
-ser.write(b'AT\r\n')  # Send AT command
-response = ser.read(100)  # Read response
-print( "SIM7600 :" , response.decode('utf-8'))  # Print the module's response
+# # Configure the serial connection
+# ser = serial.Serial('/dev/serial0', 9600, timeout=1)  # Match the SIM7600 baud rate
+# ser.write(b'AT\r\n')  # Send AT command
+# response = ser.read(100)  # Read response
+# print( "SIM7600 :" , response.decode('utf-8'))  # Print the module's response
 
+from gpiozero import Button
 
+button = Button(2)
+
+button.wait_for_press()
+print("Button was pressed")
 
 
 
