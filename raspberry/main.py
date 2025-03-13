@@ -15,7 +15,7 @@ red_light =gpiozero.OutputDevice(22)
 green_light =gpiozero.OutputDevice(24)
 blue_light =gpiozero.OutputDevice(23)
 flash_light = gpiozero.OutputDevice(26)
-button = gpiozero.Button(2)
+# button = gpiozero.Button(2)
 # button = None
 
 

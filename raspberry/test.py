@@ -19,11 +19,11 @@ try:
     while True:
         red_light.on()  # Turn the light ON
         print("Red light is ON")
-        sleep(1)        # Wait for 1 second
+        sleep(4)        # Wait for 1 second
 
         red_light.off() # Turn the light OFF
         print("Red light is OFF")
-        sleep(1)        # Wait for 1 second
+        sleep(4)        # Wait for 1 second
 except KeyboardInterrupt:
     print("\nExiting... Cleaning up GPIO.")
 
