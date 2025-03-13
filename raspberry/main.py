@@ -386,7 +386,7 @@ if __name__ == '__main__':
                 print( "Recognized: " + text[14:-3])
                 command = text[14:-3]
                 
-                if speak_in_commands(command , ['lira', 'leona', 'lila']):
+                if speak_in_commands(command , ['lira', 'leona', 'lila' , 'laura', 'later', 'lita', 'era']):
                     # Name of the machine to activate all the command
                     if speak_in_commands(command , ['help', 'emergency', 'panic']):
                         # Emergency Response: Activate the full emergency response with certain voice commands:
