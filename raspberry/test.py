@@ -5,9 +5,12 @@
 # ser.write(b'AT\r\n')  # Send AT command
 # response = ser.read(100)  # Read response
 # print( "SIM7600 :" , response.decode('utf-8'))  # Print the module's response
-from gpiozero import Button
 from signal import pause
+from gpiozero import Button
+from gpiozero.pins.rpigpio import RPiGPIOFactory  # Use RPi.GPIO pin factory
 
+factory = RPiGPIOFactory()
+button = Button(2, pin_factory=factory)
 def say_hello():
     print("Hello!")
 
