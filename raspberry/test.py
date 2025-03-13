@@ -1,10 +1,19 @@
 import serial
 
-# Configure the serial connection
-ser = serial.Serial('/dev/serial0', 115200, timeout=1)  # Match the SIM7600 baud rate
-ser.write(b'AT\r\n')  # Send AT command
-response = ser.read(100)  # Read response
-print( "SIM7600 :" , response.decode('utf-8'))  # Print the module's response
+# Configure the serial port
+gps_port = '/dev/ttyUSB0'  # Replace with your GPS module's serial port
+baud_rate = 9600           # Default baud rate for most GPS modules
+gps = serial.Serial(gps_port, baud_rate, timeout=1)
+
+print("Reading GPS data...")
+try:
+    while True:
+        line = gps.readline().decode('ascii', errors='ignore')  # Read a line from the GPS
+        print(line)  # Print raw NMEA sentence
+except KeyboardInterrupt:
+    print("\nExiting...")
+finally:
+    gps.close()  # Close the serial port connection
 
 
 
