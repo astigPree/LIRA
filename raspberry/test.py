@@ -7,6 +7,7 @@
 # print( "SIM7600 :" , response.decode('utf-8'))  # Print the module's response
 
 import RPi.GPIO as GPIO
+import time
 
 GPIO.setmode(GPIO.BCM)
 GPIO.setup(2, GPIO.IN, pull_up_down=GPIO.PUD_UP)
@@ -16,6 +17,7 @@ try:
     while True:
         state = GPIO.input(2)
         print(f"GPIO2 state: {'HIGH' if state else 'LOW'}")
+        time.sleep(0.5)
 except KeyboardInterrupt:
     GPIO.cleanup()
 
