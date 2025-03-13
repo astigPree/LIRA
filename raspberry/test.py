@@ -8,7 +8,7 @@
 from gpiozero import Button
 
 button = Button(22)
-print("Press the button connected to GPIO2!")
+print("Press the button connected to GPIO22!")
 
 try:
     button.wait_for_press()
