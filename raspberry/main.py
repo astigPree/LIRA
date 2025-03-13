@@ -364,9 +364,9 @@ if __name__ == '__main__':
         
         # Set up the serial connection (adjust the port and baud rate as needed)
         # gps = serial.Serial('/dev/ttyS0', 9600, timeout=1)
-        # sms = serial.Serial('/dev/ttyS0', 9600, timeout=1)
+        sms = serial.Serial('/dev/serial0', 115200, timeout=1)
         gps = None
-        sms = None
+        # sms = None
         
         
         
