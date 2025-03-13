@@ -2,7 +2,7 @@ import serial
 
 # Configure the serial connection
 gps_port = '/dev/ttyUSB0'
-baud_rate = 9600
+baud_rate = 115200
 gps = serial.Serial(gps_port, baud_rate, timeout=1)
 
 print("Reading GPS data...")
