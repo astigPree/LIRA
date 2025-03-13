@@ -5,22 +5,16 @@
 # ser.write(b'AT\r\n')  # Send AT command
 # response = ser.read(100)  # Read response
 # print( "SIM7600 :" , response.decode('utf-8'))  # Print the module's response
+from gpiozero import Button
 
-import RPi.GPIO as GPIO
-import time
+button = Button(2)
+print("Press the button connected to GPIO2!")
 
-GPIO.setmode(GPIO.BCM)
-GPIO.setup(2, GPIO.IN, pull_up_down=GPIO.PUD_UP)
-
-print("Reading GPIO2...")
 try:
-    while True:
-        state = GPIO.input(2)
-        print(f"GPIO2 state: {'HIGH' if state else 'LOW'}")
-        time.sleep(0.5)
+    button.wait_for_press()
+    print("Button was pressed!")
 except KeyboardInterrupt:
-    GPIO.cleanup()
-
+    print("Exiting...")
 
 
 
