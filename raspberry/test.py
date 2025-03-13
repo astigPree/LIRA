@@ -7,7 +7,7 @@
 # print( "SIM7600 :" , response.decode('utf-8'))  # Print the module's response
 from gpiozero import Button
 
-button = Button(2)
+button = Button(22)
 print("Press the button connected to GPIO2!")
 
 try:
