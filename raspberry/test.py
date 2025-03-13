@@ -6,15 +6,16 @@
 # response = ser.read(100)  # Read response
 # print( "SIM7600 :" , response.decode('utf-8'))  # Print the module's response
 from gpiozero import Button
+from signal import pause
 
-button = Button(22)
-print("Press the button connected to GPIO22!")
+def say_hello():
+    print("Hello!")
 
-try:
-    button.wait_for_press()
-    print("Button was pressed!")
-except KeyboardInterrupt:
-    print("Exiting...")
+button = Button(2)
+
+button.when_pressed = say_hello
+
+pause()
 
 
 
