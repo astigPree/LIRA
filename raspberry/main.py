@@ -424,4 +424,9 @@ if __name__ == '__main__':
             mic.terminate() 
         stop_thread = True  # Signal the thread to stop
         button_thread.join()  # Wait for the thread to finish
+        alarm.close()
+        red_light.close()
+        green_light.close()
+        blue_light.close()
+        flash_light.close() 
         GPIO.cleanup()  # Final GPIO cleanup
