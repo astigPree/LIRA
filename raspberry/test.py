@@ -2,10 +2,9 @@ import serial
 
 # Configure the serial connection
 ser = serial.Serial('/dev/serial0', 9600, timeout=1)
-ser.write(b'AT\r\n')  # Send AT command
-response = ser.read(100)  # Read response
-print(response.decode('utf-8'))  # Print the response
-
+ser.write(b'Testing loopback\n')  # Send data
+response = ser.read(100)          # Read the echoed response
+print(f"Received: {response.decode('utf-8')}")  # Display the response
 
 
 
