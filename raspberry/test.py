@@ -1,20 +1,19 @@
 import serial
 
-# Configure the serial port
-gps_port = '/dev/ttyUSB0'  # Replace with your GPS module's serial port
-baud_rate = 9600           # Default baud rate for most GPS modules
+# Configure the serial connection
+gps_port = '/dev/ttyUSB0'
+baud_rate = 9600
 gps = serial.Serial(gps_port, baud_rate, timeout=1)
 
 print("Reading GPS data...")
 try:
     while True:
-        line = gps.readline().decode('ascii', errors='ignore')  # Read a line from the GPS
-        print(line)  # Print raw NMEA sentence
+        line = gps.readline().decode('ascii', errors='ignore')
+        print(line)  # Print raw NMEA sentences
 except KeyboardInterrupt:
     print("\nExiting...")
 finally:
-    gps.close()  # Close the serial port connection
-
+    gps.close()
 
 
 # import gpiozero
