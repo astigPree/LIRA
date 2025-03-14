@@ -16,7 +16,7 @@ GPIO.setmode(GPIO.BCM)  # Use Broadcom (BCM) pin numbering
 GPIO.setup(button, GPIO.IN, pull_up_down=GPIO.PUD_UP)  # Setup GPIO2 as input with pull-up
 
 device_turn_on = True
-
+has_main_action = False
 alarm = gpiozero.OutputDevice(27)
 red_light =gpiozero.OutputDevice(22)
 green_light =gpiozero.OutputDevice(24)
@@ -61,6 +61,29 @@ def read_gps(gps: serial.Serial, timeout=300):
             else:
                 print("Failed to parse GPS data")
 
+
+
+def check_balance(sms : serial.Serial):
+    try:
+        # Send the USSD command for balance inquiry
+        sms.write(b'AT+CUSD=1,"*123#",15\r')  # Replace *123# with your network's USSD code
+        time.sleep(2)  # Wait for the response
+
+        # Read the response from the SMS module
+        response = sms.read_all().decode('ascii', errors='ignore')
+        print("Balance Response:", response)
+
+        # Check if the response contains "OK" or valid information
+        if "OK" in response or any(char.isdigit() for char in response):  # Check for numeric balance info
+            return True
+        else:
+            return False
+    except Exception as e:
+        print(f"Error checking balance: {e}")
+        return False  # Return False if an exception occurs
+
+        
+        
 def get_sms_phone_numbers( sms : serial.Serial):
     if sms is None:
         print("Failed to open SMS serial port.")
@@ -333,20 +356,24 @@ def handle_click():
 stop_thread = False
 
 def thread_button_event():
+    global sms
+    global green_light
     try:
         while not stop_thread:  # Run only if stop_thread is False
             if GPIO.input(2) == GPIO.LOW:  # Check if the button is pressed
                 print("Button was pressed!")
                 handle_click()
                 time.sleep(0.2)  # Debounce
+            if not has_main_action:
+                if not check_balance(sms):
+                    green_light.on()
+                    print("No enough load balance!")
+                    time.sleep(0.2)  # Debounce
+                    
     except Exception as e:
         print(f"Error: {e}")
-    finally:
-        GPIO.cleanup()  # Cleanup GPIO resources when the thread stops
 
 # Start the thread (non-daemon for proper cleanup)
-button_thread = Thread(target=thread_button_event, daemon=False)
-button_thread.start()
 
 model = Model(r"vosk-model-small-en-us-0.15")
 recognizer = KaldiRecognizer(model, 16000)
@@ -367,8 +394,10 @@ if __name__ == '__main__':
         sms = serial.Serial('/dev/serial0', 115200, timeout=1)
         # gps = None
         # sms = None
-        
-        
+                
+        button_thread = Thread(target=thread_button_event, daemon=False)
+        button_thread.start()
+                
         
         while True:
             
@@ -389,27 +418,35 @@ if __name__ == '__main__':
                 if speak_in_commands(command , ['lira', 'leona', 'lila' , 'laura', 'later', 'lita', 'era']):
                     # Name of the machine to activate all the command
                     if speak_in_commands(command , ['help', 'emergency', 'panic']):
+                        has_main_action = True
                         # Emergency Response: Activate the full emergency response with certain voice commands:
                         sendLocation( gps=gps , sms=sms ) # 1. Send location
                         openAlarm("on") # 2. Open alarm
                         recordAudio(stream) # 3. Record audio
+                        has_main_action = False
                     
                     if speak_in_commands(command , ['lights', 'light' , 'lighting']):
                         # Lights: Turn on/off the device's lights.
+                        has_main_action = True
                         if speak_in_commands(command, ['blink']):
                             openSOSLights('SOS')
                         elif speak_in_commands(command, ['on', 'steady', 'stay']):
                             openSOSLights('on')
                         elif speak_in_commands(command, ['off', 'turn off']):
                             openSOSLights('off')
+                        has_main_action = False
                         
                     if speak_in_commands(command , ['record', 'recording', 'recognized', 'recognize']):
                         # Recording: Start/stop audio recording.
+                        has_main_action = True
                         recordAudio(stream) 
+                        has_main_action = False
                                         
                     if speak_in_commands(command , ['sms', 'message', 'chat', 'text', 'send', 'report']):
                         # SMS: Send a pre-defined text message.
+                        has_main_action= True
                         sendLocation( gps=gps , sms=sms ) # 1. Send location
+                        has_main_action = False
 
     
     except gpiozero.exc.BadPinFactory as e:
