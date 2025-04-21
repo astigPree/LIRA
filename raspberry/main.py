@@ -342,16 +342,16 @@ def handle_click(gps , sms , stream):
     # Wait a short period to determine if more clicks are coming
     time.sleep(click_timeout)
     
-    if click_count == 1:
+    if click_count == 1 :
         # is_button_pressed = True
         single_click()
         # reset_clicks()
-    elif click_count == 2:
-        # is_button_pressed = False
+    elif click_count == 2 :
+        # is_button_pressed = True
         double_click()
         # reset_clicks()
-    elif click_count == 3:
-        is_button_pressed = False
+    elif click_count == 3 and not is_button_pressed:
+        is_button_pressed = True
         triple_click( gps=gps , sms=sms , stream=stream )
         reset_clicks()
     
