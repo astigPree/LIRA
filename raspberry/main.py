@@ -294,21 +294,24 @@ def speak_in_commands(text : str , commands : list[str]):
 
 
 def single_click():
-    global device_turn_on
+    # global device_turn_on
     print("Single click detected")
-    device_turn_on = not device_turn_on
-    if device_turn_on:
-        print("Device turned on")
-        openAlarm("device_on")
-    else:
-        print("Device turned off")
-        openAlarm("device_off")
+    # device_turn_on = not device_turn_on
+    # if device_turn_on:
+    #     print("Device turned on")
+    #     openAlarm("device_on")
+    # else:
+    #     print("Device turned off")
+    #     openAlarm("device_off")
 
 def double_click():
     print("Double click detected")
 
-def triple_click():
+def triple_click(gps , sms , stream):
     print("Triple click detected")
+    sendLocation( gps=gps , sms=sms ) # 1. Send location
+    openAlarm("on") # 2. Open alarm
+    recordAudio(stream) # 3. Record audio
 
 
 # Initialize the Vosk model and recognizer
@@ -324,7 +327,7 @@ def reset_clicks():
     is_button_pressed = False
 
 
-def handle_click():
+def handle_click(gps , sms , stream):
     global click_count, last_click_time, is_button_pressed
     
     current_time = time.time()
@@ -340,16 +343,16 @@ def handle_click():
     time.sleep(click_timeout)
     
     if click_count == 1:
-        is_button_pressed = True
+        # is_button_pressed = True
         single_click()
-        reset_clicks()
+        # reset_clicks()
     elif click_count == 2:
-        is_button_pressed = False
+        # is_button_pressed = False
         double_click()
-        reset_clicks()
+        # reset_clicks()
     elif click_count == 3:
         is_button_pressed = False
-        triple_click()
+        triple_click( gps=gps , sms=sms , stream=stream )
         reset_clicks()
     
 # Global flag to stop the thread
@@ -358,17 +361,20 @@ stop_thread = False
 def thread_button_event():
     global sms
     global green_light
+    global stream
+    global gps
     try:
         while not stop_thread:  # Run only if stop_thread is False
             if GPIO.input(2) == GPIO.LOW:  # Check if the button is pressed
                 print("Button was pressed!")
-                handle_click()
+                handle_click(gps=gps , sms=sms , stream=stream)
                 time.sleep(0.2)  # Debounce
-            if not has_main_action:
-                if not check_balance(sms):
-                    green_light.on()
-                    print("No enough load balance!")
-                    time.sleep(0.2)  # Debounce
+            else:
+                if not has_main_action:
+                    if not check_balance(sms):
+                        green_light.on()
+                        print("No enough load balance!")
+                        time.sleep(0.2)  # Debounce
                     
     except Exception as e:
         print(f"Error: {e}")
