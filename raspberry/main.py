@@ -381,7 +381,9 @@ def thread_button_event():
 
 # Start the thread (non-daemon for proper cleanup)
 
-model = Model(r"vosk-model-small-en-us-0.15")
+model_path = "/home/pi/LIRA/raspberry/vosk-model-small-en-us-0.15"
+model = Model(model_path)
+
 recognizer = KaldiRecognizer(model, 16000)
 
 mic = pyaudio.PyAudio()
