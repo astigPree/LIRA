@@ -13,7 +13,7 @@ from threading import Thread
 
 button = 2
 GPIO.setmode(GPIO.BCM)  # Use Broadcom (BCM) pin numbering
-GPIO.setup(button, GPIO.IN, pull_up_down=GPIO.PUD_UP)  # Setup GPIO2 as input with pull-up
+GPIO.setup(button, GPIO.IN)  # Setup GPIO2 as input with pull-up
 
 device_turn_on = True
 has_main_action = False
