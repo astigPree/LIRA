@@ -343,6 +343,7 @@ def handle_click(gps , sms , stream):
         click_count += 1
     
     last_click_time = current_time
+    print(f"Click count: {click_count}")
     
     # Wait a short period to determine if more clicks are coming
     time.sleep(click_timeout)
