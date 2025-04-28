@@ -344,7 +344,7 @@ def handle_click(gps , sms , stream, bref ):
     else:
         bref.click_count += 1
     
-    last_click_time = current_time
+    bref.last_click_time = current_time
     print(f"Click count: {bref.click_count}")
     
     # Wait a short period to determine if more clicks are coming
