@@ -421,7 +421,7 @@ if __name__ == '__main__':
             if not device_turn_on:
                 continue
             
-            if is_button_pressed:
+            if bevent.is_button_pressed:
                 continue
             
             
