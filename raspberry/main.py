@@ -413,6 +413,7 @@ stream.start_stream()
 if __name__ == '__main__':
     try:
         
+        openSOSLights('SOS')
         print("Starting Main Program")
         # button.when_pressed = handle_click
         
