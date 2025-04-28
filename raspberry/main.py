@@ -374,13 +374,13 @@ def thread_button_event():
             if GPIO.input(2) == GPIO.LOW:  # Check if the button is pressed
                 print("Button was pressed!")
                 handle_click(gps=gps , sms=sms , stream=stream)
-                time.sleep(0.1)  # Debounce
-            else:
-                if not has_main_action:
-                    if not check_balance(sms):
-                        green_light.on()
-                        print("No enough load balance!")
-                        time.sleep(0.1)  # Debounce
+            time.sleep(0.1)  # Debounce
+            # else:
+            #     if not has_main_action:
+            #         if not check_balance(sms):
+            #             green_light.on()
+            #             print("No enough load balance!")
+            #             time.sleep(0.1)  # Debounce
                     
     except Exception as e:
         print(f"Error: {e}")
