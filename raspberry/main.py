@@ -339,7 +339,7 @@ def handle_click(gps , sms , stream, bref ):
     
     current_time = time.time()
     
-    if bref.current_time - bref.last_click_time > bref.click_timeout:
+    if current_time - bref.last_click_time > bref.click_timeout:
         bref.click_count = 1
     else:
         bref.click_count += 1
