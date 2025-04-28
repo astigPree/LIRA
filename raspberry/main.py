@@ -319,25 +319,27 @@ def triple_click(gps , sms , stream):
     recordAudio(stream) # 3. Record audio
 
 
-# Initialize the Vosk model and recognizer
-is_button_pressed = False
-click_count = 0
-last_click_time = 0
-click_timeout = 5  # Time window for double/triple clicks in seconds
-
-def reset_clicks():
-    global click_count, last_click_time , is_button_pressed
+class ButtonEvent: 
+    # Initialize the Vosk model and recognizer
+    is_button_pressed = False
     click_count = 0
     last_click_time = 0
-    is_button_pressed = False
+    click_timeout = 5  # Time window for double/triple clicks in seconds
+
+    def reset_clicks(self):
+        self.click_count = 0
+        self.last_click_time = 0
+        self.is_button_pressed = False
+
+bevent = ButtonEvent()
 
 
-def handle_click(gps , sms , stream):
-    global click_count, last_click_time, is_button_pressed
+
+def handle_click(gps , sms , stream, bref ): 
     
     current_time = time.time()
     
-    if current_time - last_click_time > click_timeout:
+    if bref.current_time - bref.last_click_time > bref.click_timeout:
         click_count = 1
     else:
         click_count += 1
@@ -346,7 +348,7 @@ def handle_click(gps , sms , stream):
     print(f"Click count: {click_count}")
     
     # Wait a short period to determine if more clicks are coming
-    time.sleep(click_timeout)
+    time.sleep(bref.click_timeout)
     
     if click_count == 1 :
         # is_button_pressed = True
@@ -359,7 +361,7 @@ def handle_click(gps , sms , stream):
     elif click_count >= 3 and not is_button_pressed:
         is_button_pressed = True
         triple_click( gps=gps , sms=sms , stream=stream )
-        reset_clicks()
+        bref.reset_clicks()
     
 # Global flag to stop the thread
 stop_thread = False
@@ -369,18 +371,19 @@ def thread_button_event():
     global green_light
     global stream
     global gps
+    global bevent
     try:
         while not stop_thread:  # Run only if stop_thread is False
             if GPIO.input(2) == GPIO.LOW:  # Check if the button is pressed
                 print("Button was pressed!")
-                handle_click(gps=gps , sms=sms , stream=stream)
-            time.sleep(0.1)  # Debounce
-            # else:
-            #     if not has_main_action:
-            #         if not check_balance(sms):
-            #             green_light.on()
-            #             print("No enough load balance!")
-            #             time.sleep(0.1)  # Debounce
+                handle_click(gps=gps , sms=sms , stream=stream, bref=bevent)
+                time.sleep(0.1)  # Debounce
+            else:
+                if not has_main_action:
+                    if not check_balance(sms):
+                        green_light.on()
+                        print("No enough load balance!")
+                        time.sleep(0.1)  # Debounce
                     
     except Exception as e:
         print(f"Error: {e}")
