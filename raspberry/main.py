@@ -384,6 +384,14 @@ def thread_button_event():
                 if not has_main_action:
                     if not check_balance(sms):
                         green_light.on()
+                        red_light.off()
+                        blue_light.off()
+                        flash_light.off()
+                        time.sleep(1)  # Debounce
+                        green_light.off()
+                        red_light.off()
+                        blue_light.off()
+                        flash_light.off()
                         print("No enough load balance!")
                         time.sleep(0.1)  # Debounce
                     
