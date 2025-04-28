@@ -340,26 +340,26 @@ def handle_click(gps , sms , stream, bref ):
     current_time = time.time()
     
     if bref.current_time - bref.last_click_time > bref.click_timeout:
-        click_count = 1
+        bref.click_count = 1
     else:
-        click_count += 1
+        bref.click_count += 1
     
     last_click_time = current_time
-    print(f"Click count: {click_count}")
+    print(f"Click count: {bref.click_count}")
     
     # Wait a short period to determine if more clicks are coming
     time.sleep(bref.click_timeout)
     
-    if click_count == 1 :
+    if bref.click_count == 1 :
         # is_button_pressed = True
         single_click()
         # reset_clicks()
-    elif click_count == 2 :
+    elif bref.click_count == 2 :
         # is_button_pressed = True
         double_click()
         # reset_clicks()
-    elif click_count >= 3 and not is_button_pressed:
-        is_button_pressed = True
+    elif bref.click_count >= 3 and not bref.is_button_pressed:
+        bref.is_button_pressed = True
         triple_click( gps=gps , sms=sms , stream=stream )
         bref.reset_clicks()
     
