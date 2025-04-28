@@ -405,11 +405,8 @@ model = Model(model_path)
 
 recognizer = KaldiRecognizer(model, 16000)
 
-mic = pyaudio.PyAudio()
-
-stream = mic.open(format=pyaudio.paInt16, channels=1, rate=16000, input=True, frames_per_buffer=8192)
-stream.start_stream()
-
+mic = None
+stream = None
 if __name__ == '__main__':
     try:
         
@@ -425,7 +422,10 @@ if __name__ == '__main__':
                 time.sleep(0.5)
         print("Starting Main Program")
         # button.when_pressed = handle_click
-        
+        mic = pyaudio.PyAudio()
+        mic.open(format=pyaudio.paInt16, channels=1, rate=16000, input=True, frames_per_buffer=8192)
+        stream.start_stream()
+
         # Set up the serial connection (adjust the port and baud rate as needed)
         gps = serial.Serial('/dev/ttyS0', 115200, timeout=1)
         sms = serial.Serial('/dev/serial0', 115200, timeout=1)
