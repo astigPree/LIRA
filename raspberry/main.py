@@ -323,7 +323,7 @@ def triple_click(gps , sms , stream):
 is_button_pressed = False
 click_count = 0
 last_click_time = 0
-click_timeout = 2  # Time window for double/triple clicks in seconds
+click_timeout = 5  # Time window for double/triple clicks in seconds
 
 def reset_clicks():
     global click_count, last_click_time , is_button_pressed
