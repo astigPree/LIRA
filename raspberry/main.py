@@ -1,3 +1,9 @@
+
+import time
+print("Starting in 5 seconds...")
+time.sleep(5)
+print("Starting...")
+
 import pyaudio
 import wave
 import datetime
@@ -5,7 +11,6 @@ from vosk import Model, KaldiRecognizer
 import os
 import gpiozero
 import signal
-import time
 import serial
 import RPi.GPIO as GPIO
 import time
@@ -318,7 +323,7 @@ def triple_click(gps , sms , stream):
 is_button_pressed = False
 click_count = 0
 last_click_time = 0
-click_timeout = 0.4  # Time window for double/triple clicks in seconds
+click_timeout = 2  # Time window for double/triple clicks in seconds
 
 def reset_clicks():
     global click_count, last_click_time , is_button_pressed
@@ -350,7 +355,7 @@ def handle_click(gps , sms , stream):
         # is_button_pressed = True
         double_click()
         # reset_clicks()
-    elif click_count == 3 and not is_button_pressed:
+    elif click_count >= 3 and not is_button_pressed:
         is_button_pressed = True
         triple_click( gps=gps , sms=sms , stream=stream )
         reset_clicks()
@@ -368,13 +373,13 @@ def thread_button_event():
             if GPIO.input(2) == GPIO.LOW:  # Check if the button is pressed
                 print("Button was pressed!")
                 handle_click(gps=gps , sms=sms , stream=stream)
-                time.sleep(0.2)  # Debounce
+                time.sleep(0.1)  # Debounce
             else:
                 if not has_main_action:
                     if not check_balance(sms):
                         green_light.on()
                         print("No enough load balance!")
-                        time.sleep(0.2)  # Debounce
+                        time.sleep(0.1)  # Debounce
                     
     except Exception as e:
         print(f"Error: {e}")
@@ -394,7 +399,7 @@ stream.start_stream()
 if __name__ == '__main__':
     try:
         
-        print("Starting...")
+        print("Starting Main Program")
         # button.when_pressed = handle_click
         
         # Set up the serial connection (adjust the port and baud rate as needed)
