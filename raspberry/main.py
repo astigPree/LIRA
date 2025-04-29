@@ -417,22 +417,25 @@ if __name__ == '__main__':
         print("Starting Main Program")
         # button.when_pressed = handle_click
         mic = pyaudio.PyAudio()
-        stream = mic.open(format=pyaudio.paInt16, channels=1, rate=16000, input=True, frames_per_buffer=8192)
-        stream.start_stream()
+        # stream = mic.open(format=pyaudio.paInt16, channels=1, rate=16000, input=True, frames_per_buffer=8192)
+        # stream.start_stream()
          
 
         # p = pyaudio.PyAudio()
 
         # # List available devices
-        # valid_device_index = None
-        # for i in range(p.get_device_count()):
-        #     info = p.get_device_info_by_index(i)
-        #     print(f"Device {i}: {info['name']} - Sample Rate: {info['defaultSampleRate']}")
+        valid_device_index = None
+        for i in range(mic.get_device_count()):
+            info = mic.get_device_info_by_index(i)
+            print(f"Device {i}: {info['name']} - Sample Rate: {info['defaultSampleRate']}")
             
-        #     # If device has an input channel, set it as the valid index
-        #     if info['maxInputChannels'] > 0:
-        #         valid_device_index = i
-
+            # If device has an input channel, set it as the valid index
+            if info['maxInputChannels'] > 0:
+                valid_device_index = i
+        
+        stream = mic.open(format=pyaudio.paInt16, channels=1, rate=16000, input=True, frames_per_buffer=8192, input_device_index=valid_device_index)
+        stream.start_stream()
+        
         # if valid_device_index is None:
         #     print("No valid audio input device found!")
         # else:
