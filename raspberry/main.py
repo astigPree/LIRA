@@ -461,10 +461,10 @@ if __name__ == '__main__':
                         recordAudio(stream) # 3. Record audio
                         has_main_action = False
                     
-                    if speak_in_commands(command , ['lights', 'light' , 'lighting']):
+                    if speak_in_commands(command , ['lights', 'light' , 'lighting', 'let', 'lately', 'right' , 'like']):
                         # Lights: Turn on/off the device's lights.
                         has_main_action = True
-                        if speak_in_commands(command, ['blink']):
+                        if speak_in_commands(command, ['blink' , 'live', 'link']):
                             openSOSLights('SOS')
                         elif speak_in_commands(command, ['on', 'steady', 'stay']):
                             openSOSLights('on')
