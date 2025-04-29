@@ -419,15 +419,20 @@ if __name__ == '__main__':
         mic = pyaudio.PyAudio()
         stream = mic.open(format=pyaudio.paInt16, channels=1, rate=16000, input=True, frames_per_buffer=8192)
         stream.start_stream()
+        
+        print("Starting Microphone")
 
         # Set up the serial connection (adjust the port and baud rate as needed)
         gps = serial.Serial('/dev/ttyS0', 115200, timeout=1)
+        print("Starting GPS")
         sms = serial.Serial('/dev/serial0', 115200, timeout=1)
+        print("Starting SMS")
         # gps = None
         # sms = None
                 
         button_thread = Thread(target=thread_button_event, daemon=False)
         button_thread.start()
+        print("Starting Button Thread")
                 
         
         while True:
