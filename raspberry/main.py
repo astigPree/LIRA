@@ -16,6 +16,9 @@ import RPi.GPIO as GPIO
 import time
 from threading import Thread
 
+import numpy as np
+import scipy.signal
+
 button = 2
 GPIO.setmode(GPIO.BCM)  # Use Broadcom (BCM) pin numbering
 GPIO.setup(button, GPIO.IN)  # Setup GPIO2 as input with pull-up
@@ -397,6 +400,11 @@ def thread_button_event():
 model_path = "/home/pi/LIRA/raspberry/vosk-model-small-en-us-0.15"
 model = Model(model_path)
 
+def resample_audio(data, original_rate=48000, target_rate=16000):
+    audio_array = np.frombuffer(data, dtype=np.int16)
+    resampled_audio = scipy.signal.resample(audio_array, int(len(audio_array) * target_rate / original_rate))
+    return resampled_audio.astype(np.int16).tobytes()
+
 recognizer = KaldiRecognizer(model, 16000)
 
 mic = None
@@ -404,7 +412,7 @@ stream = None
 if __name__ == '__main__':
     try:
         
-                # SOS signal: 3 short, 3 long, 3 short with different colors
+        # SOS signal: 3 short, 3 long, 3 short with different colors
         colors = [(red_light, "Red"), (green_light, "Green"), (blue_light, "Blue")]
 
         for i in range(3):  # 3 short flashes
@@ -465,12 +473,16 @@ if __name__ == '__main__':
             if bevent.is_button_pressed:
                 continue
             
-            
+
             # data = stream.read(4096)
             data = stream.read(1024, exception_on_overflow=False)
 
-            if recognizer.AcceptWaveform(data):
-                text = recognizer.Result()
+            # Resample the audio to 16000 Hz
+            resampled_data = resample_audio(data, original_rate=48000, target_rate=16000)
+
+            # Pass resampled data to Vosk
+            if recognizer.AcceptWaveform(resampled_data):
+                text = recognizer.Result() 
                 print( "Recognized: " + text[14:-3])
                 command = text[14:-3]
                 
