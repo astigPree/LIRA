@@ -439,7 +439,7 @@ if __name__ == '__main__':
             sample_rate = int(p.get_device_info_by_index(valid_device_index)['defaultSampleRate'])
 
             # Open the stream with the correct device
-            stream = p.open(format=pyaudio.paInt16, channels=1, rate=sample_rate, input=True, input_device_index=valid_device_index, frames_per_buffer=8192)
+            stream = p.open(format=pyaudio.paInt16, channels=1, rate=16000, input=True, input_device_index=valid_device_index, frames_per_buffer=8192)
             stream.start_stream()
 
         print("Starting Microphone")
