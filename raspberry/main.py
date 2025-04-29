@@ -486,10 +486,10 @@ if __name__ == '__main__':
                 print( "Recognized: " + text[14:-3])
                 command = text[14:-3]
                 
-                if len(command) != 0: 
-                    flash_light.on()
-                    time.sleep(1)
-                    flash_light.off()
+                # if len(command) != 0: 
+                #     flash_light.on()
+                #     time.sleep(1)
+                #     flash_light.off()
                     
                 if speak_in_commands(command , ['lira', 'leona', 'lila' , 'laura', 'later', 'lita', 'era' , 'nina']):
                     # Name of the machine to activate all the command
