@@ -416,10 +416,26 @@ if __name__ == '__main__':
                 time.sleep(0.5)
         print("Starting Main Program")
         # button.when_pressed = handle_click
-        mic = pyaudio.PyAudio()
-        stream = mic.open(format=pyaudio.paInt16, channels=1, rate=16000, input=True, frames_per_buffer=8192)
+        # mic = pyaudio.PyAudio()
+        # stream = mic.open(format=pyaudio.paInt16, channels=1, rate=16000, input=True, frames_per_buffer=8192)
+        # stream.start_stream()
+         
+
+        p = pyaudio.PyAudio()
+
+        # Check available audio devices
+        for i in range(p.get_device_count()):
+            info = p.get_device_info_by_index(i)
+            print(f"Device {i}: {info['name']} - Sample Rate: {info['defaultSampleRate']}")
+
+        # Choose a working sample rate (adjust index based on the device list)
+        device_index = 1  # Change this index based on your list
+        sample_rate = int(p.get_device_info_by_index(device_index)['defaultSampleRate'])  # Get valid rate
+
+        # Open stream using the detected sample rate
+        stream = p.open(format=pyaudio.paInt16, channels=1, rate=sample_rate, input=True, input_device_index=device_index, frames_per_buffer=8192)
         stream.start_stream()
-        
+
         print("Starting Microphone")
 
         # Set up the serial connection (adjust the port and baud rate as needed)
