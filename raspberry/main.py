@@ -423,18 +423,24 @@ if __name__ == '__main__':
 
         p = pyaudio.PyAudio()
 
-        # Check available audio devices
+        # List available devices
+        valid_device_index = None
         for i in range(p.get_device_count()):
             info = p.get_device_info_by_index(i)
             print(f"Device {i}: {info['name']} - Sample Rate: {info['defaultSampleRate']}")
+            
+            # If device has an input channel, set it as the valid index
+            if info['maxInputChannels'] > 0:
+                valid_device_index = i
 
-        # Choose a working sample rate (adjust index based on the device list)
-        device_index = 1  # Change this index based on your list
-        sample_rate = int(p.get_device_info_by_index(device_index)['defaultSampleRate'])  # Get valid rate
+        if valid_device_index is None:
+            print("No valid audio input device found!")
+        else:
+            sample_rate = int(p.get_device_info_by_index(valid_device_index)['defaultSampleRate'])
 
-        # Open stream using the detected sample rate
-        stream = p.open(format=pyaudio.paInt16, channels=1, rate=sample_rate, input=True, input_device_index=device_index, frames_per_buffer=8192)
-        stream.start_stream()
+            # Open the stream with the correct device
+            stream = p.open(format=pyaudio.paInt16, channels=1, rate=sample_rate, input=True, input_device_index=valid_device_index, frames_per_buffer=8192)
+            stream.start_stream()
 
         print("Starting Microphone")
 
