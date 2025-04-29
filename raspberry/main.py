@@ -416,34 +416,31 @@ if __name__ == '__main__':
                 time.sleep(0.5)
         print("Starting Main Program")
         # button.when_pressed = handle_click
-        mic = pyaudio.PyAudio()
+        # mic = pyaudio.PyAudio()
         # stream = mic.open(format=pyaudio.paInt16, channels=1, rate=16000, input=True, frames_per_buffer=8192)
         # stream.start_stream()
          
 
-        # p = pyaudio.PyAudio()
+        p = pyaudio.PyAudio()
 
-        # # List available devices
+        # List available devices
         valid_device_index = None
-        for i in range(mic.get_device_count()):
-            info = mic.get_device_info_by_index(i)
+        for i in range(p.get_device_count()):
+            info = p.get_device_info_by_index(i)
             print(f"Device {i}: {info['name']} - Sample Rate: {info['defaultSampleRate']}")
             
             # If device has an input channel, set it as the valid index
             if info['maxInputChannels'] > 0:
                 valid_device_index = i
-        
-        stream = mic.open(format=pyaudio.paInt16, channels=1, rate=16000, input=True, frames_per_buffer=8192, input_device_index=valid_device_index)
-        stream.start_stream()
-        
-        # if valid_device_index is None:
-        #     print("No valid audio input device found!")
-        # else:
-        #     sample_rate = int(p.get_device_info_by_index(valid_device_index)['defaultSampleRate'])
 
-        #     # Open the stream with the correct device
-        #     stream = p.open(format=pyaudio.paInt16, channels=1, rate=sample_rate, input=True, input_device_index=valid_device_index, frames_per_buffer=1024)
-        #     stream.start_stream()
+        if valid_device_index is None:
+            print("No valid audio input device found!")
+        else:
+            sample_rate = int(p.get_device_info_by_index(valid_device_index)['defaultSampleRate'])
+
+            # Open the stream with the correct device
+            stream = p.open(format=pyaudio.paInt16, channels=1, rate=sample_rate, input=True, input_device_index=valid_device_index, frames_per_buffer=1024)
+            stream.start_stream()
 
         print("Starting Microphone")
 
@@ -469,8 +466,8 @@ if __name__ == '__main__':
                 continue
             
             
-            data = stream.read(4096, exception_on_overflow=False)
-            # data = stream.read(1024, exception_on_overflow=False)
+            # data = stream.read(4096)
+            data = stream.read(1024, exception_on_overflow=False)
 
             if recognizer.AcceptWaveform(data):
                 text = recognizer.Result()
