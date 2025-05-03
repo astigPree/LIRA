@@ -409,6 +409,7 @@ recognizer = KaldiRecognizer(model, 16000)
 
 mic = None
 stream = None
+texts = []
 if __name__ == '__main__':
     try:
         
@@ -485,7 +486,12 @@ if __name__ == '__main__':
                 text = recognizer.Result() 
                 print( "Recognized: " + text[14:-3])
                 command = text[14:-3]
+                texts.append(command)
+                if len(texts) <= 3:
+                    continue
                 
+                command = ' '.join(texts[-3:])
+                 
                 # if len(command) != 0: 
                 #     flash_light.on()
                 #     time.sleep(1)
