@@ -487,10 +487,10 @@ if __name__ == '__main__':
                 print( "Recognized: " + text[14:-3])
                 command = text[14:-3]
                 texts.append(command)
-                if len(texts) <= 3:
+                if len(texts) < 5: # Only keep the last 5 commands
                     continue
                 
-                command = ' '.join(texts[-3:])
+                command = ' '.join(texts)
                  
                 # if len(command) != 0: 
                 #     flash_light.on()
