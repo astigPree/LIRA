@@ -106,6 +106,7 @@ def send_message(message : str , phone_number : str):
         
         response = requests.post(url=SMS_MESSAGE_URL, params=params)
         if response.ok:
+            print(f'Server responded with status: {response.status_code}')
             return response.json()
         else:
             print(f'Server responded with status: {response.status_code}')
