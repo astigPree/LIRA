@@ -119,6 +119,7 @@ def send_message(message : str , phone_number : str):
         
 def get_sms_phone_numbers( sms : serial.Serial):
     phone_numbers = [
+        '09512213008',
         '09951923971',
         '09859768725',
         '09125011117',
