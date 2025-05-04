@@ -543,7 +543,7 @@ if __name__ == '__main__':
                     if speak_in_commands(command , ['lights', 'light' , 'lighting', 'let', 'lately', 'right' , 'like']):
                         # Lights: Turn on/off the device's lights.
                         has_main_action = True
-                        if speak_in_commands(command, ['off', 'turn off']): 
+                        if speak_in_commands(command, ['off', 'turn off' , 'of']): 
                             openSOSLights('off')
                         elif speak_in_commands(command, ['on', 'steady', 'stay']):
                             openSOSLights('on')
