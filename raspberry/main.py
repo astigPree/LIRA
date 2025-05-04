@@ -118,9 +118,10 @@ def send_message(message : str , phone_number : str):
         
 def get_sms_phone_numbers( sms : serial.Serial):
     phone_numbers = [
-        '0123456789',
-        '0123456789',
-        '0123456789'
+        '09951923971',
+        '09859768725',
+        '09125011117',
+        '09458499443'
     ]
     # if sms is None:
     #     print("Failed to open SMS serial port.")
