@@ -121,7 +121,8 @@ def get_sms_phone_numbers( sms : serial.Serial):
         '09951923971',
         '09859768725',
         '09125011117',
-        '09458499443'
+        '09458499443',
+        '09053330708'
     ]
     # if sms is None:
     #     print("Failed to open SMS serial port.")
