@@ -33,7 +33,7 @@ flash_light = gpiozero.OutputDevice(26)
 # button = gpiozero.Button(2)
 # button = None
 SMS_MESSAGE_URL = "https://sms.iprogtech.com/api/v1/sms_messages"
-SMS_TOKEN = "API_TOKEN"
+SMS_TOKEN = "95c199395ef43e0729b2bf4a18fc8688e817fad7"
 import requests
 
 def parse_gpgga(data : str):
