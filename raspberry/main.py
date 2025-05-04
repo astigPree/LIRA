@@ -352,6 +352,7 @@ def double_click():
 def triple_click(gps , sms , stream):
     print("Triple click detected")
     sendLocation( gps=gps , sms=sms ) # 1. Send location
+    openSOSLights('SOS')
     openAlarm("on") # 2. Open alarm
     recordAudio(stream) # 3. Record audio
 
@@ -539,6 +540,7 @@ if __name__ == '__main__':
                         has_main_action = True
                         # Emergency Response: Activate the full emergency response with certain voice commands:
                         sendLocation( gps=gps , sms=sms ) # 1. Send location
+                        openSOSLights('SOS')
                         openAlarm("on") # 2. Open alarm
                         recordAudio(stream) # 3. Record audio
                         has_main_action = False
