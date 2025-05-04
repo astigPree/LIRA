@@ -520,7 +520,7 @@ if __name__ == '__main__':
                 print( "Recognized: " + text[14:-3])
                 command = text[14:-3]
                 texts.append(command)
-                if len(texts) < 5: # Only keep the last 5 commands
+                if len(texts) < 2: # Only keep the last 5 commands
                     continue
                 
                 command = ' '.join(texts)
