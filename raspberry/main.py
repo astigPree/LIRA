@@ -448,13 +448,7 @@ if __name__ == '__main__':
         # SOS signal: 3 short, 3 long, 3 short with different colors
         colors = [(red_light, "Red"), (green_light, "Green"), (blue_light, "Blue")]
 
-        for i in range(3):  # 3 short flashes
-            for light, color_name in colors:
-                light.on()
-                print(f"Short flash: {color_name}")
-                time.sleep(0.5)
-                light.off()
-                time.sleep(0.5)
+
         print("Starting Main Program")
         # button.when_pressed = handle_click
         # mic = pyaudio.PyAudio()
@@ -497,7 +491,14 @@ if __name__ == '__main__':
         button_thread = Thread(target=thread_button_event, daemon=False)
         button_thread.start()
         print("Starting Button Thread")
-                
+        
+        for i in range(3):  # 3 short flashes
+            for light, color_name in colors:
+                light.on()
+                print(f"Short flash: {color_name}")
+                time.sleep(0.5)
+                light.off()
+                time.sleep(0.5)
         
         while True:
             
