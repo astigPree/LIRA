@@ -543,12 +543,12 @@ if __name__ == '__main__':
                     if speak_in_commands(command , ['lights', 'light' , 'lighting', 'let', 'lately', 'right' , 'like']):
                         # Lights: Turn on/off the device's lights.
                         has_main_action = True
-                        if speak_in_commands(command, ['blink' , 'live', 'link']):
-                            openSOSLights('SOS')
+                        if speak_in_commands(command, ['off', 'turn off']): 
+                            openSOSLights('off')
                         elif speak_in_commands(command, ['on', 'steady', 'stay']):
                             openSOSLights('on')
-                        elif speak_in_commands(command, ['off', 'turn off']):
-                            openSOSLights('off')
+                        elif speak_in_commands(command,['blink' , 'live', 'link']):
+                            openSOSLights('SOS')
                         has_main_action = False
                         
                     if speak_in_commands(command , ['record', 'recording', 'recognized', 'recognize']):
