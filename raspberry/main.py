@@ -527,6 +527,8 @@ if __name__ == '__main__':
                 texts.append(command)
                 if len(texts) < 2: # Only keep the last 5 commands
                     continue
+                if len(texts) > 2:
+                    texts.pop(0)
                 
                 command = ' '.join(texts)
                  
