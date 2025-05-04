@@ -546,6 +546,7 @@ if __name__ == '__main__':
                         openSOSLights('SOS')
                         openAlarm("on") # 2. Open alarm
                         recordAudio(stream) # 3. Record audio
+                        texts = []
                         has_main_action = False
                     
                     if speak_in_commands(command , ['lights', 'light' , 'lighting', 'let', 'lately', 'right' , 'like']):
@@ -557,18 +558,21 @@ if __name__ == '__main__':
                             openSOSLights('on')
                         elif speak_in_commands(command,['blink' , 'live', 'link']):
                             openSOSLights('SOS')
+                        texts = []
                         has_main_action = False
                         
                     if speak_in_commands(command , ['record', 'recording', 'recognized', 'recognize']):
                         # Recording: Start/stop audio recording.
                         has_main_action = True
                         recordAudio(stream) 
+                        texts = []
                         has_main_action = False
                                         
                     if speak_in_commands(command , ['sms', 'message', 'chat', 'text', 'send', 'report']):
                         # SMS: Send a pre-defined text message.
                         has_main_action= True
                         sendLocation( gps=gps , sms=sms ) # 1. Send location
+                        texts = []
                         has_main_action = False
 
     
