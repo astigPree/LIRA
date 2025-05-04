@@ -308,7 +308,7 @@ def openSOSLights(mode: str):
     
 def sendLocation(gps : serial.Serial, sms : serial.Serial):
     # Get the location from the module (GY-NEO6MV3)
-    if not sms or not gps:
+    if not gps:
         print("Failed to send location. Either SMS or GPS is not available.")
         return
     location = read_gps(gps)
