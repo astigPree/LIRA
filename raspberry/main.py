@@ -32,7 +32,9 @@ blue_light =gpiozero.OutputDevice(23)
 flash_light = gpiozero.OutputDevice(26)
 # button = gpiozero.Button(2)
 # button = None
-
+SMS_MESSAGE_URL = "https://sms.iprogtech.com/api/v1/sms_messages"
+SMS_TOKEN = "API_TOKEN"
+import requests
 
 def parse_gpgga(data : str):
     fields = data.split(',')
@@ -90,51 +92,79 @@ def check_balance(sms : serial.Serial):
         print(f"Error checking balance: {e}")
         return False  # Return False if an exception occurs
 
+
+def send_message(message : str , phone_number : str):
+    if not message or not phone_number:
+        return
+    params = {
+        "api_token": SMS_TOKEN,
+        "message" : message,
+        "phone_number": phone_number,
+        "sms_provider": 1
+    }
+    try:
         
+        response = requests.post(url=SMS_MESSAGE_URL, params=params)
+        if response.ok:
+            return response.json()
+        else:
+            print(f'Server responded with status: {response.status_code}')
+            print(f'Error: {response.json()}')
+            return None
+    except Exception as e:
+        print(f'Error: {e}')
+        return None
+
         
 def get_sms_phone_numbers( sms : serial.Serial):
-    if sms is None:
-        print("Failed to open SMS serial port.")
-        return []
-    sms.write(b'AT\r')
-    time.sleep(1)
-    sms.write(b'AT+CMGF=1\r')  # Set SMS mode to text
-    time.sleep(1)
-    sms.write(b'AT+CMGL="ALL"\r')  # List all SMS messages
-    time.sleep(1)
+    phone_numbers = [
+        '0123456789',
+        '0123456789',
+        '0123456789'
+    ]
+    # if sms is None:
+    #     print("Failed to open SMS serial port.")
+    #     return []
+    # sms.write(b'AT\r')
+    # time.sleep(1)
+    # sms.write(b'AT+CMGF=1\r')  # Set SMS mode to text
+    # time.sleep(1)
+    # sms.write(b'AT+CMGL="ALL"\r')  # List all SMS messages
+    # time.sleep(1)
     
-    response = sms.read_all().decode('ascii', errors='replace')
+    # response = sms.read_all().decode('ascii', errors='replace')
     
-    phone_numbers = []
-    for line in response.split('\r\n'):
-        if line.startswith('+CMGL'):
-            parts = line.split(',')
-            if len(parts) >= 3:
-                phone_number = parts[2].strip('"')
-                phone_numbers.append(phone_number)
+    # phone_numbers = []
+    # for line in response.split('\r\n'):
+    #     if line.startswith('+CMGL'):
+    #         parts = line.split(',')
+    #         if len(parts) >= 3:
+    #             phone_number = parts[2].strip('"')
+    #             phone_numbers.append(phone_number)
     
     return phone_numbers
 
 def send_sms( sms : serial.Serial , phone_number : str, message : str):
-    if sms is None:
-        print("Failed to open SMS serial port.")
-        return False
-    sms.write(b'AT\r')
-    time.sleep(1)
-    sms.write(b'AT+CMGF=1\r')  # Set SMS mode to text
-    time.sleep(1)
-    sms.write(f'AT+CMGS="{phone_number}"\r'.encode())
-    time.sleep(1)
-    sms.write(f'{message}\x1A'.encode())  # \x1A is the ASCII code for Ctrl+Z
-    time.sleep(3)
+    send_message(message, phone_number)
+    # if sms is None:
+    #     print("Failed to open SMS serial port.")
+    #     return False
+    # sms.write(b'AT\r')
+    # time.sleep(1)
+    # sms.write(b'AT+CMGF=1\r')  # Set SMS mode to text
+    # time.sleep(1)
+    # sms.write(f'AT+CMGS="{phone_number}"\r'.encode())
+    # time.sleep(1)
+    # sms.write(f'{message}\x1A'.encode())  # \x1A is the ASCII code for Ctrl+Z
+    # time.sleep(3)
     
-    response = sms.read_all().decode('ascii', errors='replace')
-    if 'OK' in response:
-        print("Message sent successfully!")
-        return True
-    else:
-        print("Failed to send message.")
-        return False
+    # response = sms.read_all().decode('ascii', errors='replace')
+    # if 'OK' in response:
+    #     print("Message sent successfully!")
+    #     return True
+    # else:
+    #     print("Failed to send message.")
+    #     return False
 
 def recordAudio(stream, duration=10, sample_rate=16000, channels=1, chunk_size=1024):
     print("Recording...")
@@ -382,15 +412,15 @@ def thread_button_event():
             if GPIO.input(2) == GPIO.LOW:  # Check if the button is pressed
                 print("Button was pressed!")
                 handle_click(gps=gps , sms=sms , stream=stream, bref=bevent)
-                time.sleep(0.1)  # Debounce
-            else:
-                if not has_main_action:
-                    if not check_balance(sms):
-                        green_light.on() 
-                        time.sleep(1)  # Debounce
-                        green_light.off() 
-                        print("No enough load balance!")
-                        time.sleep(0.1)  # Debounce
+            time.sleep(0.1)  # Debounce
+            # else:
+            #     if not has_main_action:
+            #         if not check_balance(sms):
+            #             green_light.on() 
+            #             time.sleep(1)  # Debounce
+            #             green_light.off() 
+            #             print("No enough load balance!")
+            #             time.sleep(0.1)  # Debounce
                     
     except Exception as e:
         print(f"Error: {e}")
@@ -456,7 +486,8 @@ if __name__ == '__main__':
         # Set up the serial connection (adjust the port and baud rate as needed)
         gps = serial.Serial('/dev/ttyS0', 115200, timeout=1)
         print("Starting GPS")
-        sms = serial.Serial('/dev/serial0', 115200, timeout=1)
+        # sms = serial.Serial('/dev/serial0', 115200, timeout=1)
+        sms = None
         print("Starting SMS")
         # gps = None
         # sms = None
