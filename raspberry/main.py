@@ -170,7 +170,8 @@ def send_sms( sms : serial.Serial , phone_number : str, message : str):
     #     print("Failed to send message.")
     #     return False
 
-def recordAudio(stream, duration=10, sample_rate=16000, channels=1, chunk_size=1024):
+def recordAudio(stream, duration=60, sample_rate=16000, channels=1, chunk_size=1024):
+    
     print("Recording...")
     frames = []
 
