@@ -537,7 +537,7 @@ if __name__ == '__main__':
                 #     time.sleep(1)
                 #     flash_light.off()
                     
-                if speak_in_commands(command , [ 'leroy' 'lira', 'leona', 'lila' , 'laura', 'later', 'lita', 'era' , 'nina']):
+                if speak_in_commands(command , [ 'leader', 'leroy' 'lira', 'leona', 'lila' , 'laura', 'later', 'lita', 'era' , 'nina']):
                     # Name of the machine to activate all the command
                     if speak_in_commands(command , ['help', 'emergency', 'panic']):
                         has_main_action = True
