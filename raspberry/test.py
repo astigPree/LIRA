@@ -25,6 +25,9 @@ print("Reading GPS data...")
 try:
     while True:
         print("Reading GPS data in a loop...")
+        if gps.in_waiting == 0:
+            print("No GPS data available.")
+            continue
         line = gps.readline().decode('ascii', errors='ignore')  # Read a line of NMEA data
         print("GPS data: [", line , " ]")
         if line.startswith('$GPGGA'):  # Check for GPGGA sentences
