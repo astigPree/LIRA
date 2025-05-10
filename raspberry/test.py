@@ -1,22 +1,26 @@
 import requests
 
-API_KEY = "AIzaSyAKbp4ccvxxLYzuWEyC2UH8UuOPwZQIsok"
-wifi_data = {
-    "considerIp": "false",
-    "wifiAccessPoints": [
-        {"macAddress": "B6:0F:F6:C3:0C:FA", "signalStrength": -65, "signalToNoiseRatio": 0},
-        {"macAddress": "94:25:33:44:8E:F8", "signalStrength": -70, "signalToNoiseRatio": 0}
-    ]
-}
+ip = '192.168.150.67'
+res = requests.get(f"https://geolocation-db.com/json/{ip}&position=true")
+print(res.json())
 
-url = f"https://www.googleapis.com/geolocation/v1/geolocate?key={API_KEY}"
-response = requests.post(url, json=wifi_data)
+# API_KEY = "AIzaSyAKbp4ccvxxLYzuWEyC2UH8UuOPwZQIsok"
+# wifi_data = {
+#     "considerIp": "false",
+#     "wifiAccessPoints": [
+#         {"macAddress": "B6:0F:F6:C3:0C:FA", "signalStrength": -65, "signalToNoiseRatio": 0},
+#         {"macAddress": "94:25:33:44:8E:F8", "signalStrength": -70, "signalToNoiseRatio": 0}
+#     ]
+# }
 
-if response.status_code == 200:
-    location = response.json()
-    print(f"Latitude: {location['location']['lat']}, Longitude: {location['location']['lng']}")
-else:
-    print("Failed to get location:", response.text)
+# url = f"https://www.googleapis.com/geolocation/v1/geolocate?key={API_KEY}"
+# response = requests.post(url, json=wifi_data)
+
+# if response.status_code == 200:
+#     location = response.json()
+#     print(f"Latitude: {location['location']['lat']}, Longitude: {location['location']['lng']}")
+# else:
+#     print("Failed to get location:", response.text)
 
 
 
