@@ -419,11 +419,11 @@ def handle_click(gps , sms , stream, bref ):
         # is_button_pressed = True
         single_click()
         # reset_clicks()
-        bref.reset_clicks()
+        # bref.reset_clicks()
     elif bref.click_count == 2 :
         # is_button_pressed = True
         double_click()
-        bref.reset_clicks()
+        # bref.reset_clicks()
         # reset_clicks()
     elif bref.click_count >= 3 and not bref.is_button_pressed:
         bref.is_button_pressed = True
