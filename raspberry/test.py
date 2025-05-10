@@ -25,6 +25,7 @@ print("Reading GPS data...")
 try:
     while True:
         line = gps.readline().decode('ascii', errors='ignore')  # Read a line of NMEA data
+        print("GPS data: [", line , " ]")
         if line.startswith('$GPGGA'):  # Check for GPGGA sentences
             parsed_data = parse_gpgga(line)  # Use your function to parse the sentence
             if parsed_data:
