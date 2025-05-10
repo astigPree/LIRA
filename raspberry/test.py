@@ -24,6 +24,7 @@ gps = serial.Serial(gps_port, baud_rate, timeout=1)
 print("Reading GPS data...")
 try:
     while True:
+        print("Reading GPS data in a loop...")
         line = gps.readline().decode('ascii', errors='ignore')  # Read a line of NMEA data
         print("GPS data: [", line , " ]")
         if line.startswith('$GPGGA'):  # Check for GPGGA sentences
