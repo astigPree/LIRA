@@ -419,9 +419,11 @@ def handle_click(gps , sms , stream, bref ):
         # is_button_pressed = True
         single_click()
         # reset_clicks()
+        bref.reset_clicks()
     elif bref.click_count == 2 :
         # is_button_pressed = True
         double_click()
+        bref.reset_clicks()
         # reset_clicks()
     elif bref.click_count >= 3 and not bref.is_button_pressed:
         bref.is_button_pressed = True
@@ -447,6 +449,7 @@ def thread_button_event():
             if GPIO.input(2) == GPIO.LOW:  # Check if the button is pressed
                 print("Button was pressed!")
                 handle_click(gps=gps , sms=sms , stream=stream, bref=bevent)
+            
             current_time = time.time()
             # Check if 5 minutes (300 seconds) have passed
             if current_time - start_time >= 30:
