@@ -452,12 +452,12 @@ def thread_button_event():
             
             current_time = time.time()
             # Check if 5 minutes (300 seconds) have passed
-            if current_time - start_time >= 30:
+            if current_time - gps_start_time >= 30:
                 current_location = read_gps(gps=gps, timeout=2)
                 if current_location:
                     location = current_location
                 print("5 minutes have passed...")
-                start_time = current_time  # Reset the timer
+                gps_start_time = current_time  # Reset the timer
             if current_time - gps_write_start_time >= 600: 
                 if location:
                     try:
