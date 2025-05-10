@@ -1,4 +1,5 @@
 import serial
+import time
 
 # Define the parse function
 def parse_gpgga(data: str):
@@ -25,7 +26,7 @@ print("Reading GPS data...")
 try:
     gps.write(b'$PMTK220,1000*1F\r\n')  # Set update rate to 1Hz
     gps.write(b'$PMTK314,1,1,1,1,1,1,0,0,0,0,0,0,0,0,0,0,0*2C\r\n')  # Enable all sentences
-
+    time.sleep(3)
     while True:
         print("Reading GPS data in a loop...")
         if gps.in_waiting == 0:
