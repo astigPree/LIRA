@@ -33,6 +33,7 @@ try:
 except KeyboardInterrupt:
     print("\nExiting...")
 finally:
+    print("Closing GPS serial connection...")
     gps.close()  # Close the serial connection
 
 
