@@ -590,10 +590,12 @@ if __name__ == '__main__':
                 #     time.sleep(1)
                 #     flash_light.off()
                     
-                if speak_in_commands(command , [ 'leader', 'leroy' 'lira', 'leona', 'lila' , 'laura', 'later', 'lita', 'era' , 'nina']):
+                if speak_in_commands(command , [ 'leader', 'leroy' 'lira', 'leona', 'lila' , 'laura', 'later', 'lita', 'era' , 'nina' , 'kira']):
                     # Name of the machine to activate all the command
                     if speak_in_commands(command , ['help', 'emergency', 'panic']):
                         has_main_action = True
+
+                
                         # Emergency Response: Activate the full emergency response with certain voice commands:
                         sendLocation( gps=gps , sms=sms ) # 1. Send location
                         openSOSLights('SOS')
