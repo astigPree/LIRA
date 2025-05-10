@@ -91,7 +91,7 @@ def read_gps(gps: serial.Serial, timeout=10):
             print("Timeout: GPS data not fetched within 5 minutes.")
             return None 
         line = gps.readline().decode('ascii', errors='replace')
-        print(line)
+        print("GPS data: [", line , " ]elapsed time: ", elapsed_time)
         if line.startswith('$GPGGA'):
             gps_data = parse_gpgga(line)
             if gps_data:
