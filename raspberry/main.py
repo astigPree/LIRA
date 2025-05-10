@@ -449,7 +449,7 @@ def thread_button_event():
                 handle_click(gps=gps , sms=sms , stream=stream, bref=bevent)
             current_time = time.time()
             # Check if 5 minutes (300 seconds) have passed
-            if current_time - start_time >= 300:
+            if current_time - start_time >= 30:
                 current_location = read_gps(gps=gps, timeout=2)
                 if current_location:
                     location = current_location
