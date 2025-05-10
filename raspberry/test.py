@@ -31,6 +31,7 @@ try:
         print("Reading GPS data in a loop...")
         if gps.in_waiting == 0:
             print("No GPS data available.")
+            time.sleep(1)
             continue
         line = gps.readline().decode('ascii', errors='ignore')  # Read a line of NMEA data
         print("GPS data: [", line , " ]")
