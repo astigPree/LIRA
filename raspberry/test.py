@@ -23,6 +23,9 @@ gps = serial.Serial(gps_port, baud_rate, timeout=1)
 
 print("Reading GPS data...")
 try:
+    gps.write(b'$PMTK220,1000*1F\r\n')  # Set update rate to 1Hz
+    gps.write(b'$PMTK314,1,1,1,1,1,1,0,0,0,0,0,0,0,0,0,0,0*2C\r\n')  # Enable all sentences
+
     while True:
         print("Reading GPS data in a loop...")
         if gps.in_waiting == 0:
