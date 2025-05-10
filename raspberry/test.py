@@ -19,7 +19,7 @@ def parse_gpgga(data: str):
 
 # Configure the serial connection
 gps_port = '/dev/ttyS0'  # Replace with your device port
-baud_rate = 115200
+baud_rate = 9600
 gps = serial.Serial(gps_port, baud_rate, timeout=1)
 
 print("Reading GPS data...")
