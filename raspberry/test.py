@@ -1,11 +1,22 @@
 import requests
 
-res = requests.get("https://ipinfo.io/")
-print(res.text)
+API_KEY = "AIzaSyAKbp4ccvxxLYzuWEyC2UH8UuOPwZQIsok"
+wifi_data = {
+    "considerIp": "false",
+    "wifiAccessPoints": [
+        {"macAddress": "B6:0F:F6:C3:0C:FA", "signalStrength": -65, "signalToNoiseRatio": 0},
+        {"macAddress": "94:25:33:44:8E:F8", "signalStrength": -70, "signalToNoiseRatio": 0}
+    ]
+}
 
+url = f"https://www.googleapis.com/geolocation/v1/geolocate?key={API_KEY}"
+response = requests.post(url, json=wifi_data)
 
-
-
+if response.status_code == 200:
+    location = response.json()
+    print(f"Latitude: {location['location']['lat']}, Longitude: {location['location']['lng']}")
+else:
+    print("Failed to get location:", response.text)
 
 
 
