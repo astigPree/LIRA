@@ -35,6 +35,33 @@ flash_light = gpiozero.OutputDevice(26)
 SMS_MESSAGE_URL = "https://sms.iprogtech.com/api/v1/sms_messages"
 SMS_TOKEN = "95c199395ef43e0729b2bf4a18fc8688e817fad7"
 import requests
+import json
+
+phone_numbers = [
+        '09512213008',
+        '09951923971',
+        '09859768725',
+        '09125011117',
+        '09458499443',
+        '09053330708'
+    ]
+try:
+    with open("phonenumbers.json" , "r") as f:
+        phone_numbers = json.load(f)
+except FileNotFoundError: 
+    pass
+except Exception:
+    pass
+
+location = None
+try:
+    with open("location.json" , "r") as f:
+        location = json.load(f)
+except FileNotFoundError:
+    pass
+except Exception:
+    pass
+
 
 def parse_gpgga(data : str):
     fields = data.split(',')
@@ -51,7 +78,7 @@ def parse_gpgga(data : str):
         'longitude': longitude + ' ' + longitude_dir
     }
 
-def read_gps(gps: serial.Serial, timeout=60):
+def read_gps(gps: serial.Serial, timeout=10):
     if not gps:
         print("Failed to open GPS serial port.")
         return None
@@ -118,14 +145,7 @@ def send_message(message : str , phone_number : str):
 
         
 def get_sms_phone_numbers( sms : serial.Serial):
-    phone_numbers = [
-        '09512213008',
-        '09951923971',
-        '09859768725',
-        '09125011117',
-        '09458499443',
-        '09053330708'
-    ]
+    global phone_numbers 
     # if sms is None:
     #     print("Failed to open SMS serial port.")
     #     return []
@@ -310,11 +330,15 @@ def openSOSLights(mode: str):
     
     
 def sendLocation(gps : serial.Serial, sms : serial.Serial):
+    global location
     # Get the location from the module (GY-NEO6MV3)
     if not gps:
         print("Failed to send location. Either SMS or GPS is not available.")
         return
-    location = read_gps(gps)
+    current_location = read_gps(gps)
+    if current_location:
+        location = current_location
+    
     # Send the location using your preferred method (e.g., using SIM800L )
     phone_numbers = get_sms_phone_numbers(sms)
     sms_text = "Emergency: I am in immediate danger and require urgent assistance. My last known location is as follows {latitude}, {longitude}"
@@ -406,6 +430,8 @@ def handle_click(gps , sms , stream, bref ):
     
 # Global flag to stop the thread
 stop_thread = False
+gps_start_time = time.time()  # Record the start time
+gps_write_start_time = time.time()
 
 def thread_button_event():
     global sms
@@ -413,11 +439,34 @@ def thread_button_event():
     global stream
     global gps
     global bevent
+    global gps_start_time
+    global location
+    global gps_write_start_time
     try:
         while not stop_thread:  # Run only if stop_thread is False
             if GPIO.input(2) == GPIO.LOW:  # Check if the button is pressed
                 print("Button was pressed!")
                 handle_click(gps=gps , sms=sms , stream=stream, bref=bevent)
+            current_time = time.time()
+            # Check if 5 minutes (300 seconds) have passed
+            if current_time - start_time >= 300:
+                current_location = read_gps(gps=gps, timeout=2)
+                if current_location:
+                    location = current_location
+                print("5 minutes have passed...")
+                start_time = current_time  # Reset the timer
+            if current_time - gps_write_start_time >= 600: 
+                if location:
+                    try:
+                        with open("location.json", "w") as f:
+                            json.dump(location, f)
+                    except Exception as e:
+                        print(f"Error: {e}")
+                gps_write_start_time = current_time  # Reset the timer
+            # if check_balance(sms):
+            #     green_light.on() 
+            #     time.sleep(1)  # Debounce
+            #     green_light.off()
             time.sleep(0.1)  # Debounce
             # else:
             #     if not has_main_action:
