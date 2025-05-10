@@ -453,7 +453,7 @@ def thread_button_event():
             
             current_time = time.time()
             # Check if 5 minutes (300 seconds) have passed
-            if current_time - gps_start_time >= 30:
+            if current_time - gps_start_time >= 60:
                 current_location = read_gps(gps=gps, timeout=2)
                 if current_location:
                     location = current_location
@@ -537,7 +537,7 @@ if __name__ == '__main__':
         print("Starting Microphone")
 
         # Set up the serial connection (adjust the port and baud rate as needed)
-        gps = serial.Serial('/dev/ttyS0', 9600, timeout=1)
+        gps = serial.Serial('/dev/ttyS0', 115200, timeout=1) #ttyUSB0
         print("Starting GPS")
         # sms = serial.Serial('/dev/serial0', 115200, timeout=1)
         sms = None

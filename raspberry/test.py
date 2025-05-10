@@ -1,75 +1,38 @@
-import requests
+import serial
 
-ip = '192.168.150.67'
-res = requests.get(f"https://geolocation-db.com/json/{ip}&position=true")
-print(res.json())
+# Define the parse function
+def parse_gpgga(data: str):
+    fields = data.split(',')
+    if len(fields) < 6:
+        return None
 
-# API_KEY = "AIzaSyAKbp4ccvxxLYzuWEyC2UH8UuOPwZQIsok"
-# wifi_data = {
-#     "considerIp": "false",
-#     "wifiAccessPoints": [
-#         {"macAddress": "B6:0F:F6:C3:0C:FA", "signalStrength": -65, "signalToNoiseRatio": 0},
-#         {"macAddress": "94:25:33:44:8E:F8", "signalStrength": -70, "signalToNoiseRatio": 0}
-#     ]
-# }
+    latitude = fields[2]
+    latitude_dir = fields[3]
+    longitude = fields[4]
+    longitude_dir = fields[5]
 
-# url = f"https://www.googleapis.com/geolocation/v1/geolocate?key={API_KEY}"
-# response = requests.post(url, json=wifi_data)
+    return {
+        'latitude': latitude + ' ' + latitude_dir,
+        'longitude': longitude + ' ' + longitude_dir
+    }
 
-# if response.status_code == 200:
-#     location = response.json()
-#     print(f"Latitude: {location['location']['lat']}, Longitude: {location['location']['lng']}")
-# else:
-#     print("Failed to get location:", response.text)
+# Configure the serial connection
+gps_port = '/dev/ttyUSB0'  # Replace with your device port
+baud_rate = 115200
+gps = serial.Serial(gps_port, baud_rate, timeout=1)
 
-
-
-# import serial
-# import time
-
-# # Define the parse function
-# def parse_gpgga(data: str):
-#     fields = data.split(',')
-#     if len(fields) < 6:
-#         return None
-
-#     latitude = fields[2]
-#     latitude_dir = fields[3]
-#     longitude = fields[4]
-#     longitude_dir = fields[5]
-
-#     return {
-#         'latitude': latitude + ' ' + latitude_dir,
-#         'longitude': longitude + ' ' + longitude_dir
-#     }
-
-# # Configure the serial connection
-# gps_port = '/dev/ttyS0'  # Replace with your device port
-# baud_rate = 9600
-# gps = serial.Serial(gps_port, baud_rate, timeout=1)
-
-# print("Reading GPS data...")
-# try:
-#     gps.write(b'$PMTK220,1000*1F\r\n')  # Set update rate to 1Hz
-#     gps.write(b'$PMTK314,1,1,1,1,1,1,0,0,0,0,0,0,0,0,0,0,0*2C\r\n')  # Enable all sentences
-#     time.sleep(3)
-#     while True:
-#         print("Reading GPS data in a loop...")
-#         if gps.in_waiting == 0:
-#             print("No GPS data available.")
-#             time.sleep(1)
-#             continue
-#         line = gps.readline().decode('ascii', errors='ignore')  # Read a line of NMEA data
-#         print("GPS data: [", line , " ]")
-#         if line.startswith('$GPGGA'):  # Check for GPGGA sentences
-#             parsed_data = parse_gpgga(line)  # Use your function to parse the sentence
-#             if parsed_data:
-#                 print(f"Latitude: {parsed_data['latitude']}, Longitude: {parsed_data['longitude']}")
-# except KeyboardInterrupt:
-#     print("\nExiting...")
-# finally:
-#     print("Closing GPS serial connection...")
-#     gps.close()  # Close the serial connection
+print("Reading GPS data...")
+try:
+    while True:
+        line = gps.readline().decode('ascii', errors='ignore')  # Read a line of NMEA data
+        if line.startswith('$GPGGA'):  # Check for GPGGA sentences
+            parsed_data = parse_gpgga(line)  # Use your function to parse the sentence
+            if parsed_data:
+                print(f"Latitude: {parsed_data['latitude']}, Longitude: {parsed_data['longitude']}")
+except KeyboardInterrupt:
+    print("\nExiting...")
+finally:
+    gps.close()  # Close the serial connection
 
 
 
