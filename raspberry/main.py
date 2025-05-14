@@ -377,7 +377,7 @@ def double_click():
 
 def triple_click(gps , sms , stream):
     print("Triple click detected")
-    time.sleep(5)  # 5-second delay before activating the alarm
+    time.sleep(5) # 5-second delay before activating the alarm
     openAlarm("on") # 2. Open alarm
     sendLocation( gps=gps , sms=sms ) # 1. Send location
     openSOSLights('SOS')
@@ -598,7 +598,7 @@ if __name__ == '__main__':
 
                 
                         # Emergency Response: Activate the full emergency response with certain voice commands:
-                        time.sleep(5)  # 5-second delay before activating the alarm
+                        time.sleep(5) # 5-second delay before activating the alarm
                         openAlarm("on") # 2. Open alarm
                         sendLocation( gps=gps , sms=sms ) # 1. Send location
                         openSOSLights('SOS')
