@@ -381,7 +381,7 @@ def triple_click(gps , sms , stream):
     Thread(target=openAlarm, args=("on",)).start()
     sendLocation( gps=gps , sms=sms ) # 1. Send location
     openSOSLights('SOS')
-    time.sleep(37)
+    time.sleep(60)
     recordAudio(stream) # 3. Record audio
 
 
@@ -603,7 +603,7 @@ if __name__ == '__main__':
                         Thread(target=openAlarm, args=("on",)).start() #run next comman while this command run
                         sendLocation( gps=gps , sms=sms ) # 1. Send location
                         openSOSLights('SOS')
-                        time.sleep(37)
+                        time.sleep(60)
                         recordAudio(stream) # 3. Record audio
                         texts = []
                         has_main_action = False
