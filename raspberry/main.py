@@ -377,7 +377,7 @@ def double_click():
 
 def triple_click(gps , sms , stream):
     print("Triple click detected")
-    time.sleep(5) # 5-second delay before activating the alarm
+    time.sleep(2) # 5-second delay before activating the alarm
     Thread(target=openAlarm, args=("on",)).start()
     sendLocation( gps=gps , sms=sms ) # 1. Send location
     openSOSLights('SOS')
@@ -390,7 +390,7 @@ class ButtonEvent:
     is_button_pressed = False
     click_count = 0
     last_click_time = 0
-    click_timeout = 5  # Time window for double/triple clicks in seconds
+    click_timeout = 3  # Time window for double/triple clicks in seconds
 
     def reset_clicks(self):
         self.click_count = 0
@@ -506,7 +506,7 @@ if __name__ == '__main__':
         
         # SOS signal: 3 short, 3 long, 3 short with different colors
         colors = [(red_light, "Red"), (green_light, "Green"), (blue_light, "Blue")]
-
+    
 
         print("Starting Main Program")
         # button.when_pressed = handle_click
@@ -592,7 +592,7 @@ if __name__ == '__main__':
                 #     time.sleep(1)
                 #     flash_light.off()
                     
-                if speak_in_commands(command , [ 'leader', 'leroy' 'lira', 'leona', 'lila' , 'laura', 'later', 'lita', 'era' , 'nina' , 'kira']):
+                if speak_in_commands(command , [ 'hey', 'lay' 'day', 'fay', 'bay' , 'clay', 'gay', 'jay', 'may', 'nay',  'pay', 'play', 'pray', 'ray', 'say', 'slay', 'splay', 'spray', 'tray', 'way', 'stay', 'allay', 'array']):
                     # Name of the machine to activate all the command
                     if speak_in_commands(command , ['help', 'emergency', 'panic']):
                         has_main_action = True
@@ -611,9 +611,9 @@ if __name__ == '__main__':
                     if speak_in_commands(command , ['lights', 'light' , 'lighting', 'let', 'lately', 'right' , 'like']):
                         # Lights: Turn on/off the device's lights.
                         has_main_action = True
-                        if speak_in_commands(command, ['off', 'turn off' , 'of']): 
+                        if speak_in_commands(command, ['off', 'turn off' , 'of','close']): 
                             openSOSLights('off')
-                        elif speak_in_commands(command, ['on', 'steady', 'stay']):
+                        elif speak_in_commands(command, ['on', 'steady', 'stay','open','often']):
                             openSOSLights('on')
                         elif speak_in_commands(command,['blink' , 'live', 'link']):
                             openSOSLights('SOS')
