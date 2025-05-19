@@ -79,7 +79,7 @@ def parse_gpgga(data : str):
         'longitude': longitude + ' ' + longitude_dir
     }
 
-def read_gps(gps: serial.Serial, timeout=10):
+def read_gps(gps: serial.Serial, timeout=30):
     if not gps:
         print("Failed to open GPS serial port.")
         return None
