@@ -580,11 +580,11 @@ if __name__ == '__main__':
                 result_dict = json.loads(result)
                 command = result_dict.get('text', '')
                 print( "Recognized: ", command)
-                command = text[14:-3]
+                command = command[14:-3]
                 texts.append(command)
                 if len(texts) < 2: # Only keep the last 5 commands
                     continue
-                if len(texts) > 2:
+                if len(texts) > 5:
                     texts.pop(0)
                 
                 command = ' '.join(texts)
