@@ -592,7 +592,7 @@ if __name__ == '__main__':
                 #     time.sleep(1)
                 #     flash_light.off()
                     
-                if speak_in_commands(command , [ 'hey', 'lay' 'day', 'fay', 'bay' , 'clay', 'gay', 'jay', 'may', 'nay',  'pay', 'play', 'pray', 'ray', 'say', 'slay', 'splay', 'spray', 'tray', 'way', 'stay', 'allay', 'array']):
+                if speak_in_commands(command , [ 'hey', 'lay' 'day', 'fay', 'bay' , 'clay', 'gay', 'jay', 'may', 'nay',  'pay', 'play', 'pray', 'ray', 'say', 'slay', 'splay', 'spray', 'tray', 'way', 'stay', 'allay', 'array', 'he', 'the']):
                     # Name of the machine to activate all the command
                     if speak_in_commands(command , ['help', 'emergency', 'panic']):
                         has_main_action = True
@@ -608,7 +608,7 @@ if __name__ == '__main__':
                         texts = []
                         has_main_action = False
                     
-                    if speak_in_commands(command , ['lights', 'light' , 'lighting', 'let', 'lately', 'right' , 'like', 'life', 'writes', 'write']):
+                    if speak_in_commands(command , ['lights', 'light' , 'lighting', 'let', 'lately', 'right' , 'like', 'life', 'writes', 'write', 'likes']):
                         # Lights: Turn on/off the device's lights.
                         has_main_action = True
                         if speak_in_commands(command, ['off', 'turn off' , 'of','close']): 
