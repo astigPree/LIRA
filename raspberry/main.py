@@ -609,7 +609,7 @@ if __name__ == '__main__':
                         texts = []
                         has_main_action = False
                     
-                    if speak_in_commands(command , ['lights', 'light' , 'lighting', 'let', 'lately', 'right' , 'like', 'life', 'writes', 'write', 'likes', 'night', 'nights']):
+                    if speak_in_commands(command , ['lights', 'light' , 'lighting', 'let', 'lately', 'right' , 'like', 'life', 'writes', 'write', 'likes', 'night', 'nights', "that's"]):
                         # Lights: Turn on/off the device's lights.
                         has_main_action = True
                         if speak_in_commands(command, ['off', 'turn off' , 'of','close', 'up']): 
