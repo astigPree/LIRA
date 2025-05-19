@@ -324,10 +324,10 @@ def openSOSLights(mode: str):
         print("Lights turned on")
 
     elif mode == "off":
+        flash_light.off()
         red_light.off()
         green_light.off()
         blue_light.off()
-        flash_light.off()
         print("Lights turned off")
     
     
