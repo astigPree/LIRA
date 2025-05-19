@@ -18,6 +18,7 @@ from threading import Thread
 
 import numpy as np
 import scipy.signal
+import random
 
 button = 2
 GPIO.setmode(GPIO.BCM)  # Use Broadcom (BCM) pin numbering
@@ -611,7 +612,7 @@ if __name__ == '__main__':
                     if speak_in_commands(command , ['lights', 'light' , 'lighting', 'let', 'lately', 'right' , 'like', 'life', 'writes', 'write', 'likes']):
                         # Lights: Turn on/off the device's lights.
                         has_main_action = True
-                        if speak_in_commands(command, ['off', 'turn off' , 'of','close']): 
+                        if speak_in_commands(command, ['off', 'turn off' , 'of','close', 'up']): 
                             openSOSLights('off')
                         elif speak_in_commands(command, ['on', 'steady', 'stay','open','often']):
                             openSOSLights('on')
