@@ -576,8 +576,10 @@ if __name__ == '__main__':
 
             # Pass resampled data to Vosk
             if recognizer.AcceptWaveform(resampled_data):
-                text = recognizer.Result() 
-                print( "Recognized: " + text[14:-3])
+                result = recognizer.Result()
+                result_dict = json.loads(result)
+                command = result_dict.get('text', '')
+                print( "Recognized: ", command)
                 command = text[14:-3]
                 texts.append(command)
                 if len(texts) < 2: # Only keep the last 5 commands
@@ -608,7 +610,7 @@ if __name__ == '__main__':
                         texts = []
                         has_main_action = False
                     
-                    if speak_in_commands(command , ['lights', 'light' , 'lighting', 'let', 'lately', 'right' , 'like']):
+                    if speak_in_commands(command , ['lights', 'light' , 'lighting', 'let', 'lately', 'right' , 'like', 'life', 'writes', 'write']):
                         # Lights: Turn on/off the device's lights.
                         has_main_action = True
                         if speak_in_commands(command, ['off', 'turn off' , 'of','close']): 
