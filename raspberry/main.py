@@ -576,15 +576,13 @@ if __name__ == '__main__':
 
             # Pass resampled data to Vosk
             if recognizer.AcceptWaveform(resampled_data):
-                result = recognizer.Result()
-                result_dict = json.loads(result)
-                command = result_dict.get('text', '')
-                print( "Recognized: ", command)
-                command = command[14:-3]
+                text = recognizer.Result() 
+                print( "Recognized: " + text[14:-3])
+                command = text[14:-3]
                 texts.append(command)
                 if len(texts) < 2: # Only keep the last 5 commands
                     continue
-                if len(texts) > 5:
+                if len(texts) > 2:
                     texts.pop(0)
                 
                 command = ' '.join(texts)
