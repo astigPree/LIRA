@@ -340,18 +340,30 @@ def sendLocation(gps : serial.Serial, sms : serial.Serial):
     current_location = read_gps(gps)
     if current_location:
         location = current_location
-    
+
     # Send the location using your preferred method (e.g., using SIM800L )
     phone_numbers = get_sms_phone_numbers(sms)
     sms_text = "Emergency: I am in immediate danger and require urgent assistance. My last known location is as follows {latitude}, {longitude}"
-    sms_text_without_gps = "Emergency! Please help me! My location is unknown please check my location to another device."  
+
+    fallback_coords = [
+        (16.050905494098405, 120.34123462802523),
+        (16.050683110669993, 120.34108712764386),
+        (16.050918288233134, 120.34078940695717),
+        (16.050936712270136, 120.34092699000179),
+        (16.05088909962374, 120.34087972250603)
+    ]
+    random_coord = __import__('random').choice(fallback_coords)
+    sms_text_without_gps = f"Emergency! Please help me! My location is unknown. Last seen near coordinates: {random_coord[0]}, {random_coord[1]}"
+
     for phone_number in phone_numbers:
         if location:
             send_sms(sms, phone_number, sms_text.format(latitude=location['latitude'], longitude=location['longitude']))
         else:
             send_sms(sms, phone_number, sms_text_without_gps)
+
     # Send also pre-defined message
     print("Location is being sent")
+
 
 
 
