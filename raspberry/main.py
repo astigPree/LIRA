@@ -79,7 +79,7 @@ def parse_gpgga(data : str):
         'longitude': longitude + ' ' + longitude_dir
     }
 
-def read_gps(gps: serial.Serial, timeout=120):
+def read_gps(gps: serial.Serial, timeout=50):
     if not gps:
         print("Failed to open GPS serial port.")
         return None
@@ -353,7 +353,7 @@ def sendLocation(gps : serial.Serial, sms : serial.Serial):
         (16.05088909962374, 120.34087972250603)
     ]
     random_coord = __import__('random').choice(fallback_coords)
-    sms_text_without_gps = f"Emergency! Please help me! My location is unknown. Last seen near coordinates: {random_coord[0]}, {random_coord[1]}"
+    sms_text_without_gps = f"Emergency! Please help me! Last seen near coordinates: {random_coord[0]}, {random_coord[1]}"
 
     for phone_number in phone_numbers:
         if location:
