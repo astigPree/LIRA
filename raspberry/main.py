@@ -343,11 +343,11 @@ def sendLocation(gps : serial.Serial, sms : serial.Serial):
     sms_text = "Emergency: I am in immediate danger and require urgent assistance. My last known location is as follows {latitude},{longitude}"
 
     fallback_coords = [
-        (16.050723821851363, 120.34070657766173),
-        (16.050872924275254, 120.34092002856354),
-        (16.05092152109798, 120.34081009692085),
-        (16.050936712270136, 120.34092699000179),
-        (16.050705558953958, 120.3408038909267)
+        (16.050723821851363,120.34070657766173),
+        (16.050872924275254,120.34092002856354),
+        (16.05092152109798,120.34081009692085),
+        (16.050936712270136,120.34092699000179),
+        (16.050705558953958,120.3408038909267)
     ]
     random_coord = __import__('random').choice(fallback_coords)
     sms_text_without_gps = f"Emergency! Please help me! Last seen near coordinates https://www.google.com/maps?q={random_coord[0]},{random_coord[1]}"
