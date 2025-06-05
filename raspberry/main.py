@@ -39,12 +39,9 @@ import requests
 import json
 
 phone_numbers = [
-        '09512213008',
-        '09951923971',
-        '09859768725',
-        '09125011117',
         '09458499443',
-        '09053330708'
+        '09053330708',
+        '09384231534'
     ]
 try:
     with open("phonenumbers.json" , "r") as f:
@@ -353,7 +350,7 @@ def sendLocation(gps : serial.Serial, sms : serial.Serial):
         (16.050705558953958, 120.3408038909267)
     ]
     random_coord = __import__('random').choice(fallback_coords)
-    sms_text_without_gps = f"Emergency! Please help me! Last seen near coordinates https://www.google.com/maps?q={random_coord[0]}, {random_coord[1]}"
+    sms_text_without_gps = f"Emergency! Please help me! Last seen near coordinates https://www.google.com/maps?q={random_coord[0]},{random_coord[1]}"
 
     for phone_number in phone_numbers:
         if location:
