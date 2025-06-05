@@ -340,7 +340,7 @@ def sendLocation(gps : serial.Serial, sms : serial.Serial):
 
     # Send the location using your preferred method (e.g., using SIM800L )
     phone_numbers = get_sms_phone_numbers(sms)
-    sms_text = "Emergency: I am in immediate danger and require urgent assistance. My last known location is as follows {latitude}, {longitude}"
+    sms_text = "Emergency: I am in immediate danger and require urgent assistance. My last known location is as follows {latitude},{longitude}"
 
     fallback_coords = [
         (16.050723821851363, 120.34070657766173),
